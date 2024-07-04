@@ -10,40 +10,34 @@ namespace DMSPortal.BackendServer.Data.Entities;
 [Table("Users")]
 public class User : IdentityUser, IDateTracking
 {
-    public User()
-    {
-    }
-
-    public User(string id, string userName, string fullName, string email, string phoneNumber, DateTime dob)
-    {
-        Id = id;
-        UserName = userName;
-        FullName = fullName;
-        Email = email;
-        PhoneNumber = phoneNumber;
-        Dob = dob;
-    }
-
     [MaxLength(50)]
-    [Column(TypeName = "nvarchar(50)")]
+    [Column(TypeName = "text")]
     public string? FullName { get; set; }
 
-    public DateTime? Dob { get; set; }
+    public DateTimeOffset? Dob { get; set; }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public EGender? Gender { get; set; }
 
-    [MaxLength(1000)]
-    [Column(TypeName = "nvarchar(1000)")]
-    public string? Bio { get; set; }
-
-    [Column(TypeName = "nvarchar(max)")] public string? Avatar { get; set; }
+    [Column(TypeName = "text")] 
+    public string? Avatar { get; set; }
+    
+    [Column(TypeName = "text")] 
+    public string? Address { get; set; }
 
     [Required]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public EUserStatus Status { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    [Range(0, Double.PositiveInfinity)]
+    public int? NumberOfBranches { get; set; } = 0;
 
-    public DateTime? UpdatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+    
+
+    public DateTimeOffset? DeletedAt { get; set; }
+
+    public DateTimeOffset? UpdatedAt { get; set; }
+    
+    public virtual ICollection<Branch>? Branches { get; set; } = new List<Branch>();
 }

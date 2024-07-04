@@ -5,11 +5,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DMSPortal.BackendServer.Data.Entities;
 
 [Table("Commands")]
-public class Command : EntityBase<string>
+public class Command : IdentityEntityBase<string>
 {
     [Required]
     [MaxLength(50)]
-    [Column(TypeName = "nvarchar(50)")]
+    [Column(TypeName = "text")]
     public string Name { get; set; }
 
     public virtual ICollection<CommandInFunction> CommandInFunctions { get; set; } = new List<CommandInFunction>();

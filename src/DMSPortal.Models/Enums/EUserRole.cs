@@ -3,6 +3,7 @@
 public enum EUserRole
 {
     ADMIN,
-    CUSTOMER,
-    SHIPPER,
+    VAN_PHONG,
+    HANH_CHINH,
+    KE_TOAN
 }

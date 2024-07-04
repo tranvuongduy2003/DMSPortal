@@ -1,14 +1,14 @@
 ﻿using DMSPortal.BackendServer.Data.Interfaces;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DMSPortal.BackendServer.Data.EntityBases;
 
-public abstract class EntityBase<TKey> : IEntityBase<TKey>
+public class EntityBase : IEntityBase
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [MaxLength(50)]
-    [Column(TypeName = "varchar(50)")]
-    public TKey Id { get; set; }
+    public bool IsDeleted { get; set; } = false;
+    
+    public DateTimeOffset CreatedAt { get; set; }
+    
+    public DateTimeOffset? UpdatedAt { get; set; }
+    
+    public DateTimeOffset? DeletedAt { get; set; }
 }

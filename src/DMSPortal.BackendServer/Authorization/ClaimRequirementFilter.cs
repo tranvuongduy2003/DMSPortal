@@ -31,7 +31,7 @@ public class ClaimRequirementFilter : IAuthorizationFilter
             ? requestAuthorization.ToString().Replace("Bearer ", "")
             : responseAuthorization.ToString().Replace("Bearer ", "");
 
-        if (accessToken == null || accessToken == "")
+        if (accessToken.IsNullOrEmpty())
         {
             context.Result = new ForbidResult();
             return;
@@ -39,14 +39,12 @@ public class ClaimRequirementFilter : IAuthorizationFilter
 
         var principal = _tokenService.GetPrincipalFromToken(accessToken);
 
-        var permissionsClaim = principal.Claims.SingleOrDefault(c => c.Type == SystemConstants.Claims.Permissions);
+        var permissionsClaim = principal?.Claims.SingleOrDefault(c => c.Type == SystemConstants.Claims.Permissions);
         if (permissionsClaim != null)
         {
             var permissions = JsonConvert.DeserializeObject<List<string>>(permissionsClaim.Value);
-            if (!permissions.Contains(_functionCode + "_" + _commandCode))
-            {
+            if (permissions is null || !permissions.Contains(_functionCode + "_" + _commandCode))
                 context.Result = new ForbidResult();
-            }
         }
         else
         {

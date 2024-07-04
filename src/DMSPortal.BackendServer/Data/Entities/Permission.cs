@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DMSPortal.BackendServer.Data.EntityBases;
 
 namespace DMSPortal.BackendServer.Data.Entities;
 
 [Table("Permissions")]
 [PrimaryKey("FunctionId", "RoleId", "CommandId")]
-public class Permission
+public class Permission : EntityBase
 {
     public Permission(string functionId, string roleId, string commandId)
     {
@@ -17,17 +18,14 @@ public class Permission
 
     [Required]
     [MaxLength(50)]
-    [Column(TypeName = "varchar(50)")]
     public string FunctionId { get; set; }
 
     [Required]
     [MaxLength(50)]
-    [Column(TypeName = "varchar(50)")]
     public string RoleId { get; set; }
 
     [Required]
     [MaxLength(50)]
-    [Column(TypeName = "varchar(50)")]
     public string CommandId { get; set; }
 
     [ForeignKey("FunctionId")]

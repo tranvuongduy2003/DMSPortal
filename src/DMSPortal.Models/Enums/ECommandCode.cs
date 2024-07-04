@@ -5,6 +5,5 @@ public enum ECommandCode
     CREATE,
     UPDATE,
     DELETE,
-    VIEW,
-    APPROVE
+    VIEW
 }
