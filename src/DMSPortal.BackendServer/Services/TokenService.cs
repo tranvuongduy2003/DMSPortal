@@ -48,7 +48,7 @@ public class TokenService : ITokenService
 
         var claimList = new List<Claim>
         {
-            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Email, user.Email ?? ""),
             new Claim(ClaimTypes.MobilePhone, user.PhoneNumber ?? ""),
             new Claim(JwtRegisteredClaimNames.Jti, user.Id),
             new Claim(ClaimTypes.Role, string.Join(";", roles)),
@@ -112,7 +112,7 @@ public class TokenService : ITokenService
 
     public bool ValidateTokenExpire(string token)
     {
-        if (token is null || token == "") return false;
+        if (token.IsNullOrEmpty()) return false;
 
         var tokenHandler = new JwtSecurityTokenHandler();
 

@@ -14,7 +14,7 @@ public class UserDto
 
     public string PhoneNumber { get; set; }
 
-    public DateTime? Dob { get; set; }
+    public DateTimeOffset? Dob { get; set; }
 
     public EGender? Gender { get; set; }
 

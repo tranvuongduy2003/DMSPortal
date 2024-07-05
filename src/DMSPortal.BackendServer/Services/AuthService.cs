@@ -18,21 +18,22 @@ public class AuthService : IAuthService
     private readonly ITokenService _tokenService;
     private readonly IEmailService _emailService;
     private readonly IMapper _mapper;
+    private readonly IHangfireService _hangfireService;
 
     public AuthService(UserManager<User> userManager,
-        SignInManager<User> signInManager, ITokenService tokenService, IEmailService emailService, IMapper mapper)
+        SignInManager<User> signInManager, ITokenService tokenService, IEmailService emailService, IMapper mapper, IHangfireService hangfireService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _tokenService = tokenService;
         _emailService = emailService;
         _mapper = mapper;
+        _hangfireService = hangfireService;
     }
 
     public async Task<SignInResponse?> SignInAsync(string username, string password)
     {
         var user = await _userManager.Users
-            .AsNoTracking()
             .FirstOrDefaultAsync(u => u.UserName == username);
 
         if (user is null || user.Status == EUserStatus.DISABLED)
@@ -97,8 +98,9 @@ public class AuthService : IAuthService
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
         // var resetPasswordUrl = $"https://localhost:5173/reset-password?token={token}&email={request.Email}";
         var resetPasswordUrl = $"{hostUrl}/reset-password?token={token}&email={email}";
-        
-        await SendResetPasswordEmailAsync(email, resetPasswordUrl);
+
+        _hangfireService.Enqueue(() => 
+            SendResetPasswordEmailAsync(email, resetPasswordUrl));
         
         return true;
     }
@@ -119,7 +121,7 @@ public class AuthService : IAuthService
         return userDto;
     }
 
-    private async Task SendResetPasswordEmailAsync(string email, string resetPasswordUrl)
+    public async Task SendResetPasswordEmailAsync(string email, string resetPasswordUrl)
     {
         var fullPath = Path.Combine("Templates/", "ResetPasswordEmailTemplate.html");
 

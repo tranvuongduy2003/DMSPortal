@@ -32,7 +32,7 @@ public class AuthController : ControllerBase
             request.Username ?? "",
             request.Password ?? "");
 
-        return signInResponse is null
+        return signInResponse == null
             ? Unauthorized(new ApiUnauthorizedResponse("Invalid credentials"))
             : Ok(new ApiOkResponse(signInResponse, "Sign in successfully!"));
     }
@@ -41,8 +41,6 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> LogOut()
     {
         await _authService.SignOutAsync();
-
-        Response.Cookies.Delete("AuthTokenHolder");
 
         return Ok(new ApiOkResponse(new object(), "Sign out successfully!"));
     }

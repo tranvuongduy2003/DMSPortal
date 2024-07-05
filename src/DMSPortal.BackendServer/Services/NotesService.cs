@@ -1,6 +1,8 @@
-﻿namespace DMSPortal.BackendServer.Services;
+﻿using DMSPortal.BackendServer.Services.Interfaces;
 
-public class NotesService
+namespace DMSPortal.BackendServer.Services;
+
+public class NotesService : INotesService
 {
     
 }

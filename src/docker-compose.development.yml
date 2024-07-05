@@ -48,6 +48,19 @@ services:
       - elasticsearch
     ports:
       - "5601:5601"
+  
+  dms.hangfire:
+    image: mongo
+    container_name: dms.hangfire
+    ports:
+      - "27018:27017"
+    volumes:
+      - hangfire_mongo_data:/data/db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "admin"
+      
 
 # network section
 networks:
@@ -63,3 +76,5 @@ volumes:
     name: elasticsearch_data
   pgadmin_data:
     name: pgadmin_data
+  hangfire_mongo_data:
+    name: hangfire_mongo_data

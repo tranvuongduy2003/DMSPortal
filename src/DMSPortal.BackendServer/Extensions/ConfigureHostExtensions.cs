@@ -1,4 +1,4 @@
-﻿namespace DMSPortal.BackendServer.Extentions;
+﻿namespace DMSPortal.BackendServer.Extensions;
 
 public static class ConfigureHostExtensions
 {
