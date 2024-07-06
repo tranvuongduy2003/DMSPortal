@@ -53,6 +53,18 @@
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Data\Migrations\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Templates\images\Beefree-logo.png" />
+    <None Include="wwwroot\Templates\images\Group_1.png" />
+    <None Include="wwwroot\Templates\images\password_reset.png" />
+    <None Include="wwwroot\Templates\images\round_corner_bottom.png" />
+    <None Include="wwwroot\Templates\images\round_corner_top.png" />
+    <None Include="wwwroot\Templates\oauth-template.html" />
+    <None Include="wwwroot\Templates\ResetPasswordEmailTemplate.html" />
+    <None Include="wwwroot\Templates\SignUpEmailTemplate.html" />
   </ItemGroup>
 
 </Project>

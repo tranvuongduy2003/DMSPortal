@@ -81,6 +81,7 @@ services:
       - "ConnectionStrings:DefaultConnectionString=Server=dms.db;Port=5432;Database=DMSPortalDB;User Id=admin;Password=admin@123"
       - "ConnectionStrings:CacheConnectionString=dms.cache:6379"
       - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+      - "HangfireSettings:Storage:ConnectionString=mongodb://admin:admin@dms.hangfire:27017/hangfire-webapi?authSource=admin"
     depends_on:
       - dms.db
       - dms.cache
@@ -106,3 +107,5 @@ volumes:
     name: elasticsearch_data
   pgadmin_data:
     name: pgadmin_data
+  hangfire_mongo_data:
+    name: hangfire_mongo_data

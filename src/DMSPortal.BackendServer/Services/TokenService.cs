@@ -110,15 +110,15 @@ public class TokenService : ITokenService
         return principal;
     }
 
-    public bool ValidateTokenExpire(string token)
+    public bool ValidateTokenExpired(string token)
     {
-        if (token.IsNullOrEmpty()) return false;
+        if (token.IsNullOrEmpty()) return true;
 
         var tokenHandler = new JwtSecurityTokenHandler();
 
         var jwtToken = tokenHandler.ReadToken(token);
 
-        if (jwtToken is null) return false;
+        if (jwtToken is null) return true;
 
         return jwtToken.ValidTo > DateTime.UtcNow;
     }

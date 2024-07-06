@@ -1,7 +1,7 @@
 ﻿using DMSPortal.BackendServer.Helpers.HttpResponses;
 using Newtonsoft.Json;
 
-namespace DMSPortal.BackendServer.Helpers;
+namespace DMSPortal.BackendServer.Middlewares;
 
 public class ErrorWrappingMiddleware
 {

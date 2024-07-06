@@ -8,5 +8,5 @@ public interface ITokenService
     Task<string> GenerateAccessTokenAsync(User user);
     string GenerateRefreshToken();
     ClaimsPrincipal? GetPrincipalFromToken(string token);
-    bool ValidateTokenExpire(string token);
+    bool ValidateTokenExpired(string token);
 }

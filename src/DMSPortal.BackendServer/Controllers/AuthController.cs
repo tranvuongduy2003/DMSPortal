@@ -1,6 +1,9 @@
+using DMSPortal.BackendServer.Authorization;
 using DMSPortal.BackendServer.Data.Entities;
 using DMSPortal.BackendServer.Helpers.HttpResponses;
 using DMSPortal.BackendServer.Services.Interfaces;
+using DMSPortal.Models.DTOs;
+using DMSPortal.Models.Models;
 using DMSPortal.Models.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -26,6 +29,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("signin")]
+    [ProducesResponseType(typeof(SignInResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> SignIn([FromBody] SignInRequest request)
     {
         var signInResponse = await _authService.SignInAsync(
@@ -47,6 +51,8 @@ public class AuthController : ControllerBase
 
     [Authorize]
     [HttpPost("refresh-token")]
+    [ServiceFilter(typeof(TokenRequirementFilter))]
+    [ProducesResponseType(typeof(SignInResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         if (request.RefreshToken.IsNullOrEmpty())
@@ -61,11 +67,10 @@ public class AuthController : ControllerBase
         var refreshResponse = await _authService.RefreshTokenAsync(accessToken, request.RefreshToken);
 
         return refreshResponse is null
-            ? Unauthorized(new ApiUnauthorizedResponse("Unauthorized"))
+            ? Unauthorized(new ApiUnauthorizedResponse("invalid_refresh_token"))
             : Ok(new ApiOkResponse(refreshResponse, "Refresh token successfully!"));
     }
-
-    [Authorize]
+    
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
     {
@@ -73,8 +78,7 @@ public class AuthController : ControllerBase
 
         return Ok(new ApiOkResponse("Forgot password successfully!"));
     }
-
-    [Authorize]
+    
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
     {
@@ -91,11 +95,13 @@ public class AuthController : ControllerBase
 
     [Authorize]
     [HttpGet("profile")]
+    [ServiceFilter(typeof(TokenRequirementFilter))]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUserProfile()
     {
         var accessToken = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
         if (accessToken.IsNullOrEmpty())
-            return Unauthorized(new ApiUnauthorizedResponse("Unauthorized"));
+            return Unauthorized(new ApiUnauthorizedResponse("invalid_token"));
 
         var userDto = await _authService.GetProfileAsync(accessToken);
 

@@ -8,6 +8,7 @@ using DMSPortal.Models.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace DMSPortal.BackendServer.Services;
 
@@ -19,9 +20,11 @@ public class AuthService : IAuthService
     private readonly IEmailService _emailService;
     private readonly IMapper _mapper;
     private readonly IHangfireService _hangfireService;
+    private readonly IHostingEnvironment _environment;
 
     public AuthService(UserManager<User> userManager,
-        SignInManager<User> signInManager, ITokenService tokenService, IEmailService emailService, IMapper mapper, IHangfireService hangfireService)
+        SignInManager<User> signInManager, ITokenService tokenService, IEmailService emailService, IMapper mapper,
+        IHangfireService hangfireService, IHostingEnvironment environment)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -29,6 +32,7 @@ public class AuthService : IAuthService
         _emailService = emailService;
         _mapper = mapper;
         _hangfireService = hangfireService;
+        _environment = environment;
     }
 
     public async Task<SignInResponse?> SignInAsync(string username, string password)
@@ -44,7 +48,7 @@ public class AuthService : IAuthService
             return null;
 
         await _signInManager.PasswordSignInAsync(user, password, false, false);
-        
+
         var accessToken = await _tokenService.GenerateAccessTokenAsync(user);
         var refreshToken =
             await _userManager.GenerateUserTokenAsync(user, TokenProviders.DEFAULT, TokenTypes.REFRESH);
@@ -94,14 +98,14 @@ public class AuthService : IAuthService
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null) return false;
-        
+
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
         // var resetPasswordUrl = $"https://localhost:5173/reset-password?token={token}&email={request.Email}";
-        var resetPasswordUrl = $"{hostUrl}/reset-password?token={token}&email={email}";
+        var resetPasswordUrl = $"{hostUrl}?token={token}&email={email}";
 
         _hangfireService.Enqueue(() => 
-            SendResetPasswordEmailAsync(email, resetPasswordUrl));
-        
+            SendResetPasswordEmailAsync(email, resetPasswordUrl).Wait());
+
         return true;
     }
 
@@ -109,7 +113,8 @@ public class AuthService : IAuthService
     {
         var principal = _tokenService.GetPrincipalFromToken(accessToken);
 
-        var user = await _userManager.FindByIdAsync(principal?.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value ?? "");
+        var user = await _userManager.FindByIdAsync(
+            principal?.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value ?? "");
         if (user == null)
             return null;
 
@@ -123,10 +128,10 @@ public class AuthService : IAuthService
 
     public async Task SendResetPasswordEmailAsync(string email, string resetPasswordUrl)
     {
-        var fullPath = Path.Combine("Templates/", "ResetPasswordEmailTemplate.html");
+        var fullPath = Path.Combine(_environment.WebRootPath, "Templates", "ResetPasswordEmailTemplate.html");
 
         using var str = new StreamReader(fullPath);
-        
+
         var mailText = await str.ReadToEndAsync();
 
         str.Close();
