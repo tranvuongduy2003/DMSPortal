@@ -1,5 +1,5 @@
 import { AuthProtectedRoute, HomeLayout } from '@/layouts'
-import { LoginPage, ResetPasswordPage, ForgotPasswordPage } from '@/pages/auth'
+import { ForgotPasswordPage, LoginPage, ResetPasswordPage } from '@/pages/auth'
 import { NotFoundPage } from '@/pages/notfound'
 import { Route, Routes } from 'react-router-dom'
 

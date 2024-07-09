@@ -1,15 +1,17 @@
 import { PASSWORD_REGEX } from '@/constants/regex'
 import { authService } from '@/services'
-import { ForgotPasswordParams } from '@/types'
 import { isNullOrEmpty } from '@/utils'
-import { notification, Typography, Input, Button, Form } from 'antd'
+import { Button, Form, Input, notification, Typography } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export function ResetPasswordPage() {
   const navigate = useNavigate()
-  const { email, token } = useParams<ForgotPasswordParams>()
+  const location = useLocation()
+  const params = location.search.split('&')
+  const token = params[0].split('=')[1]
+  const email = params[1].split('=')[1]
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const [form] = useForm<{ newPassword: string }>()

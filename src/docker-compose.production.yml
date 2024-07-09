@@ -2,15 +2,15 @@ version: '3.8'
 
 services:
   # client
-  dms.client:
-    container_name: dms.client
-    ports:
-      - "4444:4444"
-    build:
-      context: .
-      dockerfile: Dockerfile.Client
-    restart: always
-  
+#  dms.client:
+#    container_name: dms.client
+#    ports:
+#      - "4444:4444"
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.Client
+#    restart: always
+
   dms.cache:
     image: redis:7.0.15-alpine
     container_name: dms.cache
