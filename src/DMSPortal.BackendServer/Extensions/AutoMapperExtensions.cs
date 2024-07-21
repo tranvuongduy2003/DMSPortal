@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using System.Reflection;
+﻿using System.Reflection;
+using AutoMapper;
 
-namespace DMSPortal.BackendServer.Extentions;
+namespace DMSPortal.BackendServer.Extensions;
 
 public static class AutoMapperExtensions
 {

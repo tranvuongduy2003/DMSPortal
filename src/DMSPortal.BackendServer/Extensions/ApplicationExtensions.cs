@@ -2,22 +2,32 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-namespace DMSPortal.BackendServer.Extentions;
+namespace DMSPortal.BackendServer.Extensions;
 
 public static class ApplicationExtensions
 {
     public static void UseInfrastructure(this WebApplication app, string appCors)
     {
         // Configure the HTTP request pipeline.
-        app.UseSwagger();
-        app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Event Hub API V1"); });
 
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{app.Environment.ApplicationName} V1");
+        });
+
+
+        app.UseRouting();
         //app.UseHttpsRedirection(); //production only
 
         app.UseErrorWrapping();
         app.UseAuthentication();
         app.UseAuthorization();
+
         app.UseCors(appCors);
+
+        app.UseHangfireDashboard(app.Configuration);
+
         app.MapControllers();
         app.MapGet("/", context => Task.Run(() =>
             context.Response.Redirect("/swagger/index.html")));
@@ -31,7 +41,7 @@ public static class ApplicationExtensions
             try
             {
                 logger.LogInformation("Migrating database.");
-                if (context.Database.GetPendingMigrations().Count() > 0)
+                if (context.Database.GetPendingMigrations().Any())
                     context.Database.Migrate();
                 logger.LogInformation("Migrated database.");
                 Log.Information("Seeding data...");

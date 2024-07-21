@@ -1,4 +1,4 @@
-using DMSPortal.BackendServer.Extentions;
+using DMSPortal.BackendServer.Extensions;
 using DMSPortal.BackendServer.Helpers;
 using Serilog;
 

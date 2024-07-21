@@ -1,6 +1,8 @@
-﻿namespace DMSPortal.BackendServer.Services;
+﻿using DMSPortal.BackendServer.Services.Interfaces;
 
-public class StudentsService
+namespace DMSPortal.BackendServer.Services;
+
+public class StudentsService : IStudentsService
 {
     
 }

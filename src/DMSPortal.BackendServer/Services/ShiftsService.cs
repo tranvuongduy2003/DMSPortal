@@ -1,6 +1,8 @@
-﻿namespace DMSPortal.BackendServer.Services;
+﻿using DMSPortal.BackendServer.Services.Interfaces;
 
-public class ShiftsService
+namespace DMSPortal.BackendServer.Services;
+
+public class ShiftsService : IShiftsService
 {
     
 }

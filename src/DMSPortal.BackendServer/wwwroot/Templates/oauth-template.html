@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+  </head>
+  <body>
+    <form
+      method="POST"
+      action="https://eventhubsolutionbackendserverplan.azurewebsites.net/api/auth/external-login?provider=Google&returnUrl=http://127.0.0.1:5500/oauth-template.html"
+    >
+      <button
+        type="submit"
+        name="provider"
+        value="Google"
+        title="Login using Google"
+      >
+        Google
+      </button>
+    </form>
+
+    <form
+      method="POST"
+      action="https://eventhubsolutionbackendserverplan.azurewebsites.net/api/auth/external-login?provider=Facebook&returnUrl=http://127.0.0.1:5500/oauth-template.html"
+    >
+      <button
+        type="submit"
+        name="provider"
+        value="Facebook"
+        title="Login using Facebook"
+      >
+        Facebook
+      </button>
+    </form>
+  </body>
+</html>

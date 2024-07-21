@@ -1,6 +1,6 @@
-﻿using DMSPortal.BackendServer.Helpers;
+﻿using DMSPortal.BackendServer.Middlewares;
 
-namespace DMSPortal.BackendServer.Extentions;
+namespace DMSPortal.BackendServer.Extensions;
 
 public static class MiddlewareExtensions
 {

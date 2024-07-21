@@ -1,6 +1,8 @@
-﻿namespace DMSPortal.BackendServer.Services;
+﻿using DMSPortal.BackendServer.Services.Interfaces;
 
-public class PitchGroupsService
+namespace DMSPortal.BackendServer.Services;
+
+public class PitchGroupsService : IPitchGroupsService
 {
     
 }

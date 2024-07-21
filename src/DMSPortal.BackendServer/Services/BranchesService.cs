@@ -1,6 +1,8 @@
-﻿namespace DMSPortal.BackendServer.Services;
+﻿using DMSPortal.BackendServer.Services.Interfaces;
 
-public class BranchesService
+namespace DMSPortal.BackendServer.Services;
+
+public class BranchesService : IBranchesService
 {
     
 }

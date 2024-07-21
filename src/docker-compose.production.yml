@@ -2,15 +2,15 @@ version: '3.8'
 
 services:
   # client
-  dms.client:
-    container_name: dms.client
-    ports:
-      - "4444:4444"
-    build:
-      context: .
-      dockerfile: Dockerfile.Client
-    restart: always
-  
+#  dms.client:
+#    container_name: dms.client
+#    ports:
+#      - "4444:4444"
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.Client
+#    restart: always
+
   dms.cache:
     image: redis:7.0.15-alpine
     container_name: dms.cache
@@ -58,6 +58,18 @@ services:
       - elasticsearch
     ports:
       - "5601:5601"
+  
+  dms.hangfire:
+    image: mongo
+    container_name: dms.hangfire
+    ports:
+      - "27018:27017"
+    volumes:
+      - hangfire_mongo_data:/data/db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "admin"
 
   # api sections
   dms.api:
@@ -69,6 +81,7 @@ services:
       - "ConnectionStrings:DefaultConnectionString=Server=dms.db;Port=5432;Database=DMSPortalDB;User Id=admin;Password=admin@123"
       - "ConnectionStrings:CacheConnectionString=dms.cache:6379"
       - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+      - "HangfireSettings:Storage:ConnectionString=mongodb://admin:admin@dms.hangfire:27017/hangfire-webapi?authSource=admin"
     depends_on:
       - dms.db
       - dms.cache
@@ -94,3 +107,5 @@ volumes:
     name: elasticsearch_data
   pgadmin_data:
     name: pgadmin_data
+  hangfire_mongo_data:
+    name: hangfire_mongo_data
