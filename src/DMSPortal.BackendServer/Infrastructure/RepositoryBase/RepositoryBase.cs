@@ -35,7 +35,6 @@ public class RepositoryBase<T> : RepositoryQueryBase<T>, IRepositoryBase<T> wher
     public async Task<T> CreateAsync(T entity)
     {
         await _dbContext.Set<T>().AddAsync(entity);
-        await _dbContext.SaveChangesAsync();
         return entity;
     }
 
@@ -48,7 +47,6 @@ public class RepositoryBase<T> : RepositoryQueryBase<T>, IRepositoryBase<T> wher
     public async Task<IEnumerable<T>> CreateListAsync(IEnumerable<T> entities)
     {
         await _dbContext.Set<T>().AddRangeAsync(entities);
-        await _dbContext.SaveChangesAsync();
         return entities.ToList();
     }
 
@@ -63,7 +61,6 @@ public class RepositoryBase<T> : RepositoryQueryBase<T>, IRepositoryBase<T> wher
     {
         if (_dbContext.Entry(entity).State != EntityState.Unchanged)
             _dbContext.Entry(entity).CurrentValues.SetValues(entity);
-        await _dbContext.SaveChangesAsync();
         return entity;
     }
 
@@ -76,8 +73,6 @@ public class RepositoryBase<T> : RepositoryQueryBase<T>, IRepositoryBase<T> wher
     public async Task<IEnumerable<T>> UpdateListAsync(IEnumerable<T> entities)
     {
         await _dbContext.Set<T>().AddRangeAsync(entities);
-        await _dbContext.SaveChangesAsync();
-
         return entities;
     }
 
@@ -86,7 +81,6 @@ public class RepositoryBase<T> : RepositoryQueryBase<T>, IRepositoryBase<T> wher
     public async Task DeleteAsync(T entity)
     {
         _dbContext.Set<T>().Remove(entity);
-        await _dbContext.SaveChangesAsync();
     }
 
     public void DeleteList(IEnumerable<T> entities) => _dbContext.Set<T>().RemoveRange(entities);
@@ -94,7 +88,6 @@ public class RepositoryBase<T> : RepositoryQueryBase<T>, IRepositoryBase<T> wher
     public async Task DeleteListAsync(IEnumerable<T> entities)
     {
         _dbContext.Set<T>().RemoveRange(entities);
-        await _dbContext.SaveChangesAsync();
     }
 
     public Task<int> SaveChangesAsync() => _dbContext.SaveChangesAsync();
@@ -129,7 +122,6 @@ public class RepositoryBase<T, K> : RepositoryQueryBase<T, K>, IRepositoryBase<T
     public async Task<T> CreateAsync(T entity)
     {
         await _dbContext.Set<T>().AddAsync(entity);
-        await _dbContext.SaveChangesAsync();
         return entity;
     }
 
@@ -142,7 +134,6 @@ public class RepositoryBase<T, K> : RepositoryQueryBase<T, K>, IRepositoryBase<T
     public async Task<IEnumerable<T>> CreateListAsync(IEnumerable<T> entities)
     {
         await _dbContext.Set<T>().AddRangeAsync(entities);
-        await _dbContext.SaveChangesAsync();
         return entities.ToList();
     }
 
@@ -165,7 +156,6 @@ public class RepositoryBase<T, K> : RepositoryQueryBase<T, K>, IRepositoryBase<T
             T exist = _dbContext.Set<T>().Find(entity.Id);
             if (exist == null || exist.IsDeleted) return entity;
             _dbContext.Entry(exist).CurrentValues.SetValues(entity);
-            await _dbContext.SaveChangesAsync();
         }
 
         return entity;
@@ -180,7 +170,6 @@ public class RepositoryBase<T, K> : RepositoryQueryBase<T, K>, IRepositoryBase<T
     public async Task<IEnumerable<T>> UpdateListAsync(IEnumerable<T> entities)
     {
         await _dbContext.Set<T>().AddRangeAsync(entities);
-        await _dbContext.SaveChangesAsync();
 
         return entities;
     }
@@ -190,7 +179,6 @@ public class RepositoryBase<T, K> : RepositoryQueryBase<T, K>, IRepositoryBase<T
     public async Task DeleteAsync(T entity)
     {
         _dbContext.Set<T>().Remove(entity);
-        await _dbContext.SaveChangesAsync();
     }
 
     public void DeleteList(IEnumerable<T> entities) => _dbContext.Set<T>().RemoveRange(entities);
@@ -198,7 +186,6 @@ public class RepositoryBase<T, K> : RepositoryQueryBase<T, K>, IRepositoryBase<T
     public async Task DeleteListAsync(IEnumerable<T> entities)
     {
         _dbContext.Set<T>().RemoveRange(entities);
-        await _dbContext.SaveChangesAsync();
     }
 
     public Task<int> SaveChangesAsync() => _dbContext.SaveChangesAsync();

@@ -276,6 +276,8 @@ public static class ServiceExtensions
             .AddTransient<IPitchGroupsService, PitchGroupsService>()
             .AddTransient<IShiftsService, ShiftsService>()
             .AddTransient<IStudentsService, StudentsService>()
+            .AddTransient<ICommandsService, CommandsService>()
+            .AddTransient<IPermissionsService, PermissionsService >()
             .AddScoped(typeof(IRepositoryQueryBase<,>), typeof(RepositoryQueryBase<,>))
             .AddScoped(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>))
             .AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork))

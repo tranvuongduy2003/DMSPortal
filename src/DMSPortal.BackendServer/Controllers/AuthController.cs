@@ -30,6 +30,7 @@ public class AuthController : ControllerBase
 
     [HttpPost("signin")]
     [ProducesResponseType(typeof(SignInResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> SignIn([FromBody] SignInRequest request)
     {
         var signInResponse = await _authService.SignInAsync(
@@ -42,6 +43,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("logout")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> LogOut()
     {
         await _authService.SignOutAsync();
@@ -53,6 +55,7 @@ public class AuthController : ControllerBase
     [HttpPost("refresh-token")]
     [ServiceFilter(typeof(TokenRequirementFilter))]
     [ProducesResponseType(typeof(SignInResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         if (request.RefreshToken.IsNullOrEmpty())
@@ -72,6 +75,7 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("forgot-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
     {
         await _authService.ForgotPasswordAsync(request.Email, request.HostUrl);
@@ -80,6 +84,9 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("reset-password")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
@@ -97,6 +104,7 @@ public class AuthController : ControllerBase
     [HttpGet("profile")]
     [ServiceFilter(typeof(TokenRequirementFilter))]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetUserProfile()
     {
         var accessToken = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
