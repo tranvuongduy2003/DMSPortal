@@ -2,6 +2,7 @@
 using DMSPortal.BackendServer.Infrastructure.Interfaces;
 using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.DTOs;
+using DMSPortal.Models.DTOs.Command;
 using Microsoft.EntityFrameworkCore;
 
 namespace DMSPortal.BackendServer.Services;

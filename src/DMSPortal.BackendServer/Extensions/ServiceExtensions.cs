@@ -77,8 +77,7 @@ public static class ServiceExtensions
         var jwtOptions = configuration.GetSection(nameof(JwtOptions))
             .Get<JwtOptions>();
         services.AddSingleton<JwtOptions>(jwtOptions);
-
-
+        
         var emailSettings = configuration.GetSection(nameof(EmailSettings))
             .Get<EmailSettings>();
         services.AddSingleton<EmailSettings>(emailSettings);
@@ -278,6 +277,7 @@ public static class ServiceExtensions
             .AddTransient<IStudentsService, StudentsService>()
             .AddTransient<ICommandsService, CommandsService>()
             .AddTransient<IPermissionsService, PermissionsService >()
+            .AddTransient<IFunctionsService, FunctionsService >()
             .AddScoped(typeof(IRepositoryQueryBase<,>), typeof(RepositoryQueryBase<,>))
             .AddScoped(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>))
             .AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork))

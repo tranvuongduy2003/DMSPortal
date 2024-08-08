@@ -1,12 +1,14 @@
-﻿using DMSPortal.BackendServer.Data;
+﻿using DMSPortal.BackendServer.Authorization;
 using DMSPortal.BackendServer.Helpers.HttpResponses;
 using DMSPortal.BackendServer.Services.Interfaces;
-using DMSPortal.Models.DTOs;
+using DMSPortal.Models.DTOs.Command;
+using DMSPortal.Models.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DMSPortal.BackendServer.Controllers;
 
-[Route("api/commands")]
+[Route("api/v1/[controller]")]
 [ApiController]
 public class CommandsController : ControllerBase
 {
@@ -18,7 +20,10 @@ public class CommandsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
+    [ClaimRequirement(EFunctionCode.SYSTEM_COMMAND, ECommandCode.VIEW)]
     [ProducesResponseType(typeof(List<CommandDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetCommands()
     {
         var commandDtos = await _commandsService.GetAllCommandsAsync();

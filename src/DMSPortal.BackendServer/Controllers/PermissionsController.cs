@@ -1,15 +1,16 @@
 ﻿using DMSPortal.BackendServer.Authorization;
-using DMSPortal.BackendServer.Data.Entities;
 using DMSPortal.BackendServer.Helpers.HttpResponses;
 using DMSPortal.BackendServer.Services.Interfaces;
-using DMSPortal.Models.DTOs;
+using DMSPortal.Models.DTOs.Permission;
 using DMSPortal.Models.Enums;
+using DMSPortal.Models.Exceptions;
 using DMSPortal.Models.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DMSPortal.BackendServer.Controllers;
 
-[Route("api/permissions")]
+[Route("api/v1/[controller]")]
 [ApiController]
 public class PermissionsController : ControllerBase
 {
@@ -19,10 +20,12 @@ public class PermissionsController : ControllerBase
     {
         _permissionsService = permissionsService;
     }
-    
+
     [HttpGet]
-    [ProducesResponseType(typeof(List<PermissionScreenDto>), StatusCodes.Status200OK)]
+    [Authorize]
     [ClaimRequirement(EFunctionCode.SYSTEM_PERMISSION, ECommandCode.VIEW)]
+    [ProducesResponseType(typeof(List<PermissionScreenDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetCommandViews()
     {
         var permissions = await _permissionsService.GetCommandViewsAsync();
@@ -31,20 +34,24 @@ public class PermissionsController : ControllerBase
     }
 
     [HttpGet("roles")]
-    [ProducesResponseType(typeof(List<RolePermissionDto>), StatusCodes.Status200OK)]
+    [Authorize]
     [ClaimRequirement(EFunctionCode.SYSTEM_PERMISSION, ECommandCode.VIEW)]
+    [ProducesResponseType(typeof(List<RolePermissionDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetRolePermissions()
     {
         var roles = await _permissionsService.GetRolePermissionsAsync();
-        
+
         return Ok(new ApiOkResponse(roles));
     }
 
     [HttpPut]
+    [Authorize]
+    [ClaimRequirement(EFunctionCode.SYSTEM_PERMISSION, ECommandCode.UPDATE)]
     [ProducesResponseType(typeof(List<PermissionScreenDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ClaimRequirement(EFunctionCode.SYSTEM_PERMISSION, ECommandCode.UPDATE)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> PutPermissionByCommand([FromBody] UpdatePermissionByCommandRequest request)
     {
         try
@@ -53,11 +60,11 @@ public class PermissionsController : ControllerBase
 
             return await GetCommandViews();
         }
-        catch (KeyNotFoundException ex)
+        catch (NotFoundException ex)
         {
             return NotFound(new ApiNotFoundResponse(ex.Message));
         }
-        catch (BadHttpRequestException ex)
+        catch (BadRequestException ex)
         {
             return BadRequest(new ApiBadRequestResponse(ex.Message));
         }
@@ -66,12 +73,14 @@ public class PermissionsController : ControllerBase
             throw;
         }
     }
-    
+
     [HttpPut("roles")]
+    [Authorize]
+    [ClaimRequirement(EFunctionCode.SYSTEM_PERMISSION, ECommandCode.UPDATE)]
     [ProducesResponseType(typeof(List<RolePermissionDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ClaimRequirement(EFunctionCode.SYSTEM_PERMISSION, ECommandCode.UPDATE)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> PutPermissionByRole([FromBody] UpdatePermissionByRoleRequest request)
     {
         try
@@ -80,11 +89,11 @@ public class PermissionsController : ControllerBase
 
             return await GetRolePermissions();
         }
-        catch (KeyNotFoundException ex)
+        catch (NotFoundException ex)
         {
             return NotFound(new ApiNotFoundResponse(ex.Message));
         }
-        catch (BadHttpRequestException ex)
+        catch (BadRequestException ex)
         {
             return BadRequest(new ApiBadRequestResponse(ex.Message));
         }

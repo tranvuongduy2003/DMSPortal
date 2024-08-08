@@ -1,14 +1,11 @@
-﻿using System.Data;
-using Dapper;
-using DMSPortal.BackendServer.Data.Entities;
-using DMSPortal.BackendServer.Helpers.HttpResponses;
+﻿using DMSPortal.BackendServer.Data.Entities;
 using DMSPortal.BackendServer.Infrastructure.Interfaces;
 using DMSPortal.BackendServer.Services.Interfaces;
-using DMSPortal.Models.DTOs;
+using DMSPortal.Models.DTOs.Permission;
 using DMSPortal.Models.Enums;
+using DMSPortal.Models.Exceptions;
 using DMSPortal.Models.Requests;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace DMSPortal.BackendServer.Services;
@@ -70,11 +67,11 @@ public class PermissionsService : IPermissionsService
         {
             var function = await _unitOfWork.Functions.GetByIdAsync(request.FunctionId);
             if (function == null)
-                throw new KeyNotFoundException("Funtion does not exist!");
+                throw new NotFoundException("Funtion does not exist!");
 
             var command = await _unitOfWork.Commands.GetByIdAsync(request.CommandId);
             if (command == null)
-                throw new KeyNotFoundException("Command does not exist!");
+                throw new NotFoundException("Command does not exist!");
 
             var commandInFunction = await _unitOfWork.CommandInFunctions
                 .FindByCondition(cif =>
@@ -83,7 +80,7 @@ public class PermissionsService : IPermissionsService
                 .FirstOrDefaultAsync();
             
             if (commandInFunction != null)
-                throw new BadHttpRequestException("Permission already exists!");
+                throw new BadRequestException("Permission already exists!");
             
             if (request.Value == true)
             {
@@ -115,13 +112,13 @@ public class PermissionsService : IPermissionsService
         {
             var function = await _unitOfWork.Functions.GetByIdAsync(request.FunctionId);
             if (function == null)
-                throw new KeyNotFoundException("Funtion does not exist!");
+                throw new NotFoundException("Funtion does not exist!");
     
             var role = await _roleManager.Roles
                 .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.Id.Equals(request.RoleId));
             if (role == null)
-                throw new KeyNotFoundException("Role does not exist!");
+                throw new NotFoundException("Role does not exist!");
 
             var permissions = await _unitOfWork.Permissions
                 .FindByCondition(p => p.FunctionId.Equals(request.FunctionId) 
@@ -130,7 +127,7 @@ public class PermissionsService : IPermissionsService
             if (request.Value == true)
             {
                 if (permissions.Count > 0)
-                    throw new BadHttpRequestException("Permission already exists!");
+                    throw new BadRequestException("Permission already exists!");
                 
                 permissions = await _unitOfWork.CommandInFunctions
                     .FindByCondition(cif => cif.FunctionId.Equals(request.FunctionId))
@@ -142,7 +139,7 @@ public class PermissionsService : IPermissionsService
             else
             {
                 if (permissions.Count <= 0)
-                    throw new BadHttpRequestException("Permission does not exist!");
+                    throw new BadRequestException("Permission does not exist!");
     
                 await _unitOfWork.Permissions.DeleteListAsync(permissions);
             }

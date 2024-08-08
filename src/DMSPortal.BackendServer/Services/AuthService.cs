@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using DMSPortal.BackendServer.Data.Entities;
 using DMSPortal.BackendServer.Services.Interfaces;
-using DMSPortal.Models.DTOs;
+using DMSPortal.Models.DTOs.Auth;
+using DMSPortal.Models.DTOs.User;
 using DMSPortal.Models.Enums;
-using DMSPortal.Models.Models;
 using DMSPortal.Models.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +35,7 @@ public class AuthService : IAuthService
         _environment = environment;
     }
 
-    public async Task<SignInResponse?> SignInAsync(string username, string password)
+    public async Task<SignInResponseDto?> SignInAsync(string username, string password)
     {
         var user = await _userManager.Users
             .FirstOrDefaultAsync(u => u.UserName == username);
@@ -56,7 +56,7 @@ public class AuthService : IAuthService
         await _userManager.SetAuthenticationTokenAsync(user, TokenProviders.DEFAULT, TokenTypes.REFRESH,
             refreshToken);
 
-        return new SignInResponse()
+        return new SignInResponseDto()
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken
@@ -69,7 +69,7 @@ public class AuthService : IAuthService
         return true;
     }
 
-    public async Task<SignInResponse?> RefreshTokenAsync(string accessToken, string refreshToken)
+    public async Task<SignInResponseDto?> RefreshTokenAsync(string accessToken, string refreshToken)
     {
         var principal = _tokenService.GetPrincipalFromToken(accessToken);
 
@@ -87,7 +87,7 @@ public class AuthService : IAuthService
         var newRefreshToken =
             await _userManager.GenerateUserTokenAsync(user, TokenProviders.DEFAULT, TokenTypes.REFRESH);
 
-        return new SignInResponse()
+        return new SignInResponseDto()
         {
             AccessToken = newAccessToken,
             RefreshToken = newRefreshToken

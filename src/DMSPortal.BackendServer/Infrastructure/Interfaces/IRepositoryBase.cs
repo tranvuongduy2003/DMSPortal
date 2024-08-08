@@ -10,6 +10,7 @@ public interface IRepositoryQueryBase<T> where T : EntityBase
     IQueryable<T> FindAll(bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties);
     IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false);
     IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties);
+    Task<bool> ExistAsync(Expression<Func<T, bool>> expression);
 }
 
 public interface IRepositoryQueryBase<T, K> : IRepositoryQueryBase<T> where T : IdentityEntityBase<K>

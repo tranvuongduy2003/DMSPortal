@@ -1,4 +1,4 @@
-﻿using DMSPortal.Models.DTOs;
+﻿using DMSPortal.Models.DTOs.Permission;
 using DMSPortal.Models.Requests;
 
 namespace DMSPortal.BackendServer.Services.Interfaces;

@@ -120,6 +120,6 @@ public class TokenService : ITokenService
 
         if (jwtToken is null) return true;
 
-        return jwtToken.ValidTo > DateTime.UtcNow;
+        return jwtToken.ValidTo < DateTime.UtcNow;
     }
 }
