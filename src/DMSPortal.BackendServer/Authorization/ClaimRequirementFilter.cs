@@ -1,4 +1,5 @@
-﻿using DMSPortal.BackendServer.Services.Interfaces;
+﻿using DMSPortal.BackendServer.Helpers.HttpResponses;
+using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.Enums;
 using DMSPortal.Models.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
@@ -30,10 +31,10 @@ public class ClaimRequirementFilter : IAuthorizationFilter
         var accessToken = !requestAuthorization.IsNullOrEmpty()
             ? requestAuthorization.ToString().Replace("Bearer ", "")
             : responseAuthorization.ToString().Replace("Bearer ", "");
-
-        if (accessToken.IsNullOrEmpty())
+        
+        if (_tokenService.ValidateTokenExpired(accessToken))
         {
-            context.Result = new ForbidResult();
+            context.Result = new UnauthorizedObjectResult(new ApiUnauthorizedResponse("invalid_token"));
             return;
         }
 

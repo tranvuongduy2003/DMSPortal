@@ -48,7 +48,7 @@ public class TokenService : ITokenService
 
         var claimList = new List<Claim>
         {
-            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Email, user.Email ?? ""),
             new Claim(ClaimTypes.MobilePhone, user.PhoneNumber ?? ""),
             new Claim(JwtRegisteredClaimNames.Jti, user.Id),
             new Claim(ClaimTypes.Role, string.Join(";", roles)),
@@ -110,16 +110,16 @@ public class TokenService : ITokenService
         return principal;
     }
 
-    public bool ValidateTokenExpire(string token)
+    public bool ValidateTokenExpired(string token)
     {
-        if (token is null || token == "") return false;
+        if (token.IsNullOrEmpty()) return true;
 
         var tokenHandler = new JwtSecurityTokenHandler();
 
         var jwtToken = tokenHandler.ReadToken(token);
 
-        if (jwtToken is null) return false;
+        if (jwtToken is null) return true;
 
-        return jwtToken.ValidTo > DateTime.UtcNow;
+        return jwtToken.ValidTo < DateTime.UtcNow;
     }
 }

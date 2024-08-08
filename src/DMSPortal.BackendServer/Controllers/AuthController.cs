@@ -1,18 +1,22 @@
+using DMSPortal.BackendServer.Authorization;
 using DMSPortal.BackendServer.Data.Entities;
 using DMSPortal.BackendServer.Helpers.HttpResponses;
 using DMSPortal.BackendServer.Services.Interfaces;
-using DMSPortal.Models.Requests;
+using DMSPortal.Models.DTOs.Auth;
+using DMSPortal.Models.DTOs.User;
+using DMSPortal.Models.Enums;
+using DMSPortal.Models.Requests.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
-using ForgotPasswordRequest = DMSPortal.Models.Requests.ForgotPasswordRequest;
+using ForgotPasswordRequest = DMSPortal.Models.Requests.Auth.ForgotPasswordRequest;
 
 namespace DMSPortal.BackendServer.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 [ApiController]
 public class AuthController : ControllerBase
 {
@@ -26,29 +30,37 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("signin")]
+    [ProducesResponseType(typeof(SignInResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SignIn([FromBody] SignInRequest request)
     {
         var signInResponse = await _authService.SignInAsync(
             request.Username ?? "",
             request.Password ?? "");
 
-        return signInResponse is null
+        return signInResponse == null
             ? Unauthorized(new ApiUnauthorizedResponse("Invalid credentials"))
             : Ok(new ApiOkResponse(signInResponse, "Sign in successfully!"));
     }
 
     [HttpPost("logout")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> LogOut()
     {
         await _authService.SignOutAsync();
 
-        Response.Cookies.Delete("AuthTokenHolder");
-
         return Ok(new ApiOkResponse(new object(), "Sign out successfully!"));
     }
 
-    [Authorize]
     [HttpPost("refresh-token")]
+    [Authorize]
+    [TokenRequirement()]
+    [ApiValidationFilter]
+    [ProducesResponseType(typeof(SignInResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         if (request.RefreshToken.IsNullOrEmpty())
@@ -63,21 +75,27 @@ public class AuthController : ControllerBase
         var refreshResponse = await _authService.RefreshTokenAsync(accessToken, request.RefreshToken);
 
         return refreshResponse is null
-            ? Unauthorized(new ApiUnauthorizedResponse("Unauthorized"))
+            ? Unauthorized(new ApiUnauthorizedResponse("invalid_refresh_token"))
             : Ok(new ApiOkResponse(refreshResponse, "Refresh token successfully!"));
     }
-
-    [Authorize]
+    
     [HttpPost("forgot-password")]
+    [ApiValidationFilter]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
     {
         await _authService.ForgotPasswordAsync(request.Email, request.HostUrl);
 
         return Ok(new ApiOkResponse("Forgot password successfully!"));
     }
-
-    [Authorize]
+    
     [HttpPost("reset-password")]
+    [ApiValidationFilter]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
@@ -91,13 +109,17 @@ public class AuthController : ControllerBase
         return Ok(new ApiOkResponse());
     }
 
-    [Authorize]
     [HttpGet("profile")]
+    [Authorize]
+    [ClaimRequirement(EFunctionCode.SYSTEM_USER, ECommandCode.VIEW)]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetUserProfile()
     {
         var accessToken = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
         if (accessToken.IsNullOrEmpty())
-            return Unauthorized(new ApiUnauthorizedResponse("Unauthorized"));
+            return Unauthorized(new ApiUnauthorizedResponse("invalid_token"));
 
         var userDto = await _authService.GetProfileAsync(accessToken);
 

@@ -17,8 +17,9 @@ public class RepositoryQueryBase<T> : IRepositoryQueryBase<T>
     }
 
     public IQueryable<T> FindAll(bool trackChanges = false) =>
-        !trackChanges ? _dbContext.Set<T>().AsNoTracking().Where(e => !e.IsDeleted) :
-            _dbContext.Set<T>().Where(e => !e.IsDeleted);
+        !trackChanges
+            ? _dbContext.Set<T>().AsNoTracking().Where(e => !e.IsDeleted)
+            : _dbContext.Set<T>().Where(e => !e.IsDeleted);
 
     public IQueryable<T> FindAll(bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties)
     {
@@ -32,12 +33,17 @@ public class RepositoryQueryBase<T> : IRepositoryQueryBase<T>
             ? _dbContext.Set<T>().Where(e => !e.IsDeleted).Where(expression).AsNoTracking()
             : _dbContext.Set<T>().Where(e => !e.IsDeleted).Where(expression);
 
-    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false, params Expression<Func<T, object>>[] includeProperties)
+    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false,
+        params Expression<Func<T, object>>[] includeProperties)
     {
         var items = FindByCondition(expression, trackChanges);
         items = includeProperties.Aggregate(items, (current, includeProperty) => current.Include(includeProperty));
         return items;
     }
+
+    public async Task<bool> ExistAsync(Expression<Func<T, bool>> expression) =>
+        await _dbContext.Set<T>().Where(e => !e.IsDeleted).AnyAsync(expression);
+
 }
 
 public class RepositoryQueryBase<T, K> : RepositoryQueryBase<T>, IRepositoryQueryBase<T, K>

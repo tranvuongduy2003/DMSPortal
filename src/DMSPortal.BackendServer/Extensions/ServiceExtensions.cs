@@ -1,4 +1,8 @@
-﻿using DMSPortal.BackendServer.Data;
+﻿using System.Security.Authentication;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using DMSPortal.BackendServer.Data;
 using DMSPortal.BackendServer.Data.Entities;
 using DMSPortal.BackendServer.Infrastructure.Interfaces;
 using DMSPortal.BackendServer.Infrastructure.RepositoryBase;
@@ -8,17 +12,21 @@ using DMSPortal.BackendServer.Services;
 using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.Configurations;
 using FluentValidation.AspNetCore;
+using Hangfire;
+using Hangfire.Console.Extensions;
+using Hangfire.Mongo;
+using Hangfire.Mongo.Migration.Strategies;
+using Hangfire.Mongo.Migration.Strategies.Backup;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using MongoDB.Driver;
+using Newtonsoft.Json;
 
-namespace DMSPortal.BackendServer.Extentions;
+namespace DMSPortal.BackendServer.Extensions;
 
 public static class ServiceExtensions
 {
@@ -31,7 +39,7 @@ public static class ServiceExtensions
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals;
                 options.JsonSerializerOptions.DefaultIgnoreCondition =
-                    System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                    JsonIgnoreCondition.WhenWritingNull;
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
         services.AddCors(p =>
@@ -56,6 +64,7 @@ public static class ServiceExtensions
         services.ConfigureApplication();
         services.ConfigureApplicationDbContext(configuration);
         services.ConfigureRedis(configuration);
+        services.ConfigureHangfireServices();
         services.ConfigureAuthetication();
         services.ConfigureInfrastructureServices();
 
@@ -68,11 +77,14 @@ public static class ServiceExtensions
         var jwtOptions = configuration.GetSection(nameof(JwtOptions))
             .Get<JwtOptions>();
         services.AddSingleton<JwtOptions>(jwtOptions);
-
-
+        
         var emailSettings = configuration.GetSection(nameof(EmailSettings))
             .Get<EmailSettings>();
         services.AddSingleton<EmailSettings>(emailSettings);
+
+        var hangfireSettings = configuration.GetSection(nameof(HangfireSettings))
+            .Get<HangfireSettings>();
+        services.AddSingleton<HangfireSettings>(hangfireSettings);
 
         return services;
     }
@@ -197,15 +209,90 @@ public static class ServiceExtensions
         return services;
     }
 
+    public static IServiceCollection ConfigureHangfireServices(this IServiceCollection services)
+    {
+        var hangfireSettings = services.GetOptions<HangfireSettings>("HangfireSettings");
+        if (hangfireSettings == null
+            || hangfireSettings.Storage == null
+            || string.IsNullOrEmpty(hangfireSettings.Storage.ConnectionString)
+            || string.IsNullOrEmpty(hangfireSettings.Storage.DBProvider))
+            throw new ArgumentNullException("HangfireSettings is not configured properly!");
+
+        var mongoUrlBuilder = new MongoUrlBuilder(hangfireSettings.Storage.ConnectionString);
+
+        var mongoClientSettings = MongoClientSettings.FromUrl(
+            new MongoUrl(hangfireSettings.Storage.ConnectionString));
+        mongoClientSettings.SslSettings = new SslSettings()
+        {
+            EnabledSslProtocols = SslProtocols.Tls12
+        };
+        var mongoClient = new MongoClient(mongoClientSettings);
+        var mongoStorageOptions = new MongoStorageOptions()
+        {
+            MigrationOptions = new MongoMigrationOptions()
+            {
+                MigrationStrategy = new MigrateMongoMigrationStrategy(),
+                BackupStrategy = new CollectionMongoBackupStrategy()
+            },
+            CheckConnection = true,
+            Prefix = "SchedulerQueue",
+            CheckQueuedJobsStrategy = CheckQueuedJobsStrategy.TailNotificationsCollection
+        };
+
+        services.AddHangfire((provider, config) =>
+        {
+            config.UseSimpleAssemblyNameTypeSerializer()
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseMongoStorage(mongoClient, mongoUrlBuilder.DatabaseName, mongoStorageOptions);
+
+            var jsonSettings = new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.All,
+            };
+            config.UseSerializerSettings(jsonSettings);
+        });
+        services.AddHangfireConsoleExtensions();
+        services.AddHangfireServer(options => { options.ServerName = hangfireSettings.ServerName; });
+
+        return services;
+    }
+
     private static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services) =>
         services.AddTransient<DbInitializer>()
             .AddTransient<IEmailService, EmailService>()
             .AddTransient<ITokenService, TokenService>()
             .AddTransient<ICacheService, CacheService>()
+            .AddTransient<IHangfireService, HangfireService>()
             .AddTransient<ISerializeService, SerializeService>()
+            .AddScoped<IAttendancesService, AttendancesService>()
+            .AddTransient<IAuthService, AuthService>()
+            .AddTransient<IBranchesService, BranchesService>()
+            .AddTransient<IClassesService, ClassesService>()
+            .AddTransient<INotesService, NotesService>()
+            .AddTransient<IPitchesService, PitchesService>()
+            .AddTransient<IPitchGroupsService, PitchGroupsService>()
+            .AddTransient<IShiftsService, ShiftsService>()
+            .AddTransient<IStudentsService, StudentsService>()
+            .AddTransient<ICommandsService, CommandsService>()
+            .AddTransient<IPermissionsService, PermissionsService >()
+            .AddTransient<IFunctionsService, FunctionsService >()
             .AddScoped(typeof(IRepositoryQueryBase<,>), typeof(RepositoryQueryBase<,>))
             .AddScoped(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>))
             .AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork))
+            .AddScoped<IAttendancesRepository, AttendancesRepository>()
+            .AddScoped<IBranchesRepository, BranchesRepository>()
+            .AddScoped<IClassesRepository, ClassesRepository>()
+            .AddScoped<IClassInShiftsRepository, ClassInShiftsRepository>()
+            .AddScoped<ICommandInFunctionsRepository, CommandInFunctionsRepository>()
+            .AddScoped<ICommandsRepository, CommandsRepository>()
             .AddScoped<IFunctionsRepository, FunctionsRepository>()
-            .AddScoped<ICommandsRepository, CommandsRepository>();
+            .AddScoped<INotesRepository, NotesRepository>()
+            .AddScoped<IPermissionsRepository, PermissionsRepository>()
+            .AddScoped<IPitchesRepository, PitchesRepository>()
+            .AddScoped<IPitchGroupsRepository, PitchGroupsRepository>()
+            .AddScoped<IShiftsRepository, ShiftsRepository>()
+            .AddScoped<IStudentInClassesRepository, StudentInClassesRepository>()
+            .AddScoped<IStudentsRepository, StudentsRepository>();
 }

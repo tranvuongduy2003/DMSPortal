@@ -21,33 +21,29 @@ services:
     volumes:
       - postgres_data:/var/lib/postgressql/data
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.2
-    container_name: elasticsearch
+  dms.seq:
+    image: datalust/seq:latest
+    container_name: eventhub.seq
     environment:
-      - xpack.monitoring.enabled=true
-      - xpack.watcher.enabled=false
-      - xpack.security.enabled=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - discovery.type=single-node
-      # - ELASTIC_USERNAME=elastic #default username
-      - ELASTIC_PASSWORD=admin
+      - ACCEPT_EULA=Y
     ports:
-      - "9200:9200"
+      - "5341:5341"
+      - "8081:80"
     volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.17.2
-    container_name: kibana
-    environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=admin
-    depends_on:
-      - elasticsearch
+      - seq_data:/data
+  
+  dms.hangfire:
+    image: mongo
+    container_name: dms.hangfire
     ports:
-      - "5601:5601"
+      - "27018:27017"
+    volumes:
+      - hangfire_mongo_data:/data/db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "admin"
+      
 
 # network section
 networks:
@@ -59,7 +55,9 @@ networks:
 volumes:
   postgres_data:
     name: postgres_data
-  elasticsearch_data:
-    name: elasticsearch_data
+  seq_data:
+    name: seq_data
   pgadmin_data:
     name: pgadmin_data
+  hangfire_mongo_data:
+    name: hangfire_mongo_data
