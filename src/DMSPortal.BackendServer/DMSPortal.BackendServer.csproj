@@ -11,7 +11,7 @@
 
   <ItemGroup>
 	  <PackageReference Include="AutoMapper" Version="13.0.1" />
-	  <PackageReference Include="Bogus" Version="35.5.1" />
+	  <PackageReference Include="Bogus" Version="35.6.0" />
 	  <PackageReference Include="Dapper" Version="2.1.35" />
 	  <PackageReference Include="FluentValidation" Version="11.9.2" />
 	  <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
@@ -19,33 +19,34 @@
 	  <PackageReference Include="Hangfire.AspNetCore" Version="1.8.14" />
 	  <PackageReference Include="Hangfire.Console" Version="1.4.3" />
 	  <PackageReference Include="Hangfire.Console.Extensions" Version="2.0.0" />
-	  <PackageReference Include="Hangfire.Mongo" Version="1.10.7" />
-	  <PackageReference Include="MailKit" Version="4.6.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
-	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.6" />
+	  <PackageReference Include="Hangfire.Mongo" Version="1.10.8" />
+	  <PackageReference Include="MailKit" Version="4.7.1.1" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
+	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.7" />
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.8" />
 	  <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
+	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
-	  <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.6" />
+	  <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.7" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
-	  <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
-	  <PackageReference Include="MimeKit" Version="4.6.0" />
+	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+	  <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
+	  <PackageReference Include="MimeKit" Version="4.7.1" />
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
 	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
-	  <PackageReference Include="Serilog" Version="4.0.0" />
+	  <PackageReference Include="Serilog" Version="4.0.1" />
 	  <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
 	  <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
-	  <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.1" />
+	  <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.2" />
 	  <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
 	  <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
 	  <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
 	  <PackageReference Include="StackExchange.Redis" Version="2.8.0" />
-	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
   </ItemGroup>
 
   <ItemGroup>

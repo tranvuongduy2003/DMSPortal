@@ -1,6 +1,6 @@
-﻿using DMSPortal.BackendServer.Services.Interfaces;
+﻿using DMSPortal.BackendServer.Models;
+using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.Configurations;
-using DMSPortal.Models.Models;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;

@@ -23,11 +23,11 @@ public class ApplicationDbContext : IdentityDbContext<User>
             {
                 if (item.State == EntityState.Added)
                 {
-                    changedOrAddedItem.CreatedAt = DateTimeOffset.UtcNow;
+                    changedOrAddedItem.CreatedAt = DateTime.UtcNow;
                 }
                 else
                 {
-                    changedOrAddedItem.UpdatedAt = DateTimeOffset.UtcNow;
+                    changedOrAddedItem.UpdatedAt = DateTime.UtcNow;
                 }
             }
 

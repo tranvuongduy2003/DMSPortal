@@ -1,7 +1,9 @@
-﻿using DMSPortal.BackendServer.Authorization;
+﻿using DMSPortal.BackendServer.Attributes;
 using DMSPortal.BackendServer.Helpers.HttpResponses;
+using DMSPortal.BackendServer.Models;
 using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.DTOs.Class;
+using DMSPortal.Models.DTOs.Student;
 using DMSPortal.Models.Enums;
 using DMSPortal.Models.Exceptions;
 using DMSPortal.Models.Requests.Class;
@@ -15,38 +17,85 @@ namespace DMSPortal.BackendServer.Controllers;
 public class ClassesController : ControllerBase
 {
     private readonly IClassesService _classesService;
+    private readonly IStudentsService _studentsService;
 
-    public ClassesController(IClassesService classesService)
+    public ClassesController(IClassesService classesService, IStudentsService studentsService)
     {
         _classesService = classesService;
+        _studentsService = studentsService;
     }
     
     [HttpGet]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_CLASS, ECommandCode.VIEW)]
-    [ProducesResponseType(typeof(List<ClassDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Pagination<ClassDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetClasses()
+    public async Task<IActionResult> GetClasses([FromQuery] PaginationFilter filter)
     {
-        var classes = await _classesService.GetClassesAsync();
+        var classes = await _classesService.GetClassesAsync(filter);
 
         return Ok(new ApiOkResponse(classes));
     }
     
+    [HttpGet("{classId}/students")]
+    [ClaimRequirement(EFunctionCode.GENERAL_CLASS, ECommandCode.VIEW)]
+    [ClaimRequirement(EFunctionCode.GENERAL_STUDENT, ECommandCode.VIEW)]
+    [ProducesResponseType(typeof(Pagination<StudentDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetStudentsByClassId(string classId, [FromQuery] PaginationFilter filter)
+    {
+        try
+        {
+            var students = await _studentsService.GetStudentsByClassIdAsync(classId, filter);
+
+            return Ok(new ApiOkResponse(students));
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(new ApiNotFoundResponse(e.Message));
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    
+    [HttpGet("{classId}")]
+    [ClaimRequirement(EFunctionCode.GENERAL_STUDENT, ECommandCode.VIEW)]
+    [ProducesResponseType(typeof(ClassDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ClassDto), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetClassById(string classId)
+    {
+        try
+        {
+            var classDto = await _classesService.GetClassByIdAsync(classId);
+
+            return Ok(new ApiOkResponse(classDto));
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(new ApiNotFoundResponse(e.Message));
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    
     [HttpPost]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_CLASS, ECommandCode.CREATE)]
     [ApiValidationFilter]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ClassDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateClass([FromBody] CreateClassRequest request)
     {
         try
         {
-            await _classesService.CreateClassAsync(request);
+            var classDto = await _classesService.CreateClassAsync(request);
 
-            return Ok(new ApiCreatedResponse());
+            return Ok(new ApiCreatedResponse(classDto));
         }
         catch (BadRequestException e)
         {
@@ -59,7 +108,6 @@ public class ClassesController : ControllerBase
     }
     
     [HttpPut("{classId}")]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_CLASS, ECommandCode.UPDATE)]
     [ApiValidationFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -89,7 +137,6 @@ public class ClassesController : ControllerBase
     }
     
     [HttpDelete("{classId}")]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_CLASS, ECommandCode.DELETE)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

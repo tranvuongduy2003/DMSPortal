@@ -1,4 +1,4 @@
-using DMSPortal.BackendServer.Authorization;
+using DMSPortal.BackendServer.Attributes;
 using DMSPortal.BackendServer.Helpers.HttpResponses;
 using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.DTOs.Function;
@@ -20,7 +20,6 @@ public class FunctionsController : ControllerBase
     }
     
     [HttpGet]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.SYSTEM_FUNCTION, ECommandCode.VIEW)]
     [ProducesResponseType(typeof(List<FunctionDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]

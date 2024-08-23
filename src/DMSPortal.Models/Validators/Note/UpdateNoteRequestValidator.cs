@@ -9,14 +9,14 @@ public class UpdateNoteRequestValidator : AbstractValidator<UpdateNoteRequest>
     {
         RuleFor(x => x.Id)
             .NotEmpty()
-            .WithMessage("Id is required")
+            .WithMessage("Id không được để trống")
             .MaximumLength(50)
-            .WithMessage("Id must be less than 50 characters");
+            .WithMessage("Id phải có ít hơn 50 kí tự");
         
         RuleFor(x => x.Content)
             .NotEmpty()
-            .WithMessage("Content is required")
+            .WithMessage("Content không được để trống")
             .MaximumLength(1000)
-            .WithMessage("Content must be less than 1000 characters");
+            .WithMessage("Content phải có ít hơn 1000 kí tự");
     }
 }

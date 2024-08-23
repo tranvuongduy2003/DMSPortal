@@ -1,5 +1,5 @@
-﻿using DMSPortal.Models.DTOs.Student;
-using DMSPortal.Models.Models;
+﻿using DMSPortal.BackendServer.Models;
+using DMSPortal.Models.DTOs.Student;
 using DMSPortal.Models.Requests.Student;
 
 namespace DMSPortal.BackendServer.Services.Interfaces;
@@ -12,7 +12,7 @@ public interface IStudentsService
     
     Task<StudentDto> GetStudentByIdAsync(string studentId);
     
-    Task<bool> CreateStudentAsync(CreateStudentRequest request);
+    Task<StudentDto> CreateStudentAsync(CreateStudentRequest request);
     
     Task<bool> UpdateStudentAsync(string studentId, UpdateStudentRequest request);
     

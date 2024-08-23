@@ -1,5 +1,6 @@
-﻿using DMSPortal.BackendServer.Authorization;
+﻿using DMSPortal.BackendServer.Attributes;
 using DMSPortal.BackendServer.Helpers.HttpResponses;
+using DMSPortal.BackendServer.Models;
 using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.DTOs.Student;
 using DMSPortal.Models.Enums;
@@ -22,19 +23,17 @@ public class StudentsController : ControllerBase
     }
     
     [HttpGet]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_STUDENT, ECommandCode.VIEW)]
     [ProducesResponseType(typeof(List<StudentDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetStudents()
+    public async Task<IActionResult> GetStudents([FromQuery] PaginationFilter filter)
     {
-        var students = await _studentsService.GetStudentsAsync();
+        var students = await _studentsService.GetStudentsAsync(filter);
 
         return Ok(new ApiOkResponse(students));
     }
     
     [HttpGet("{studentId}")]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_STUDENT, ECommandCode.VIEW)]
     [ProducesResponseType(typeof(StudentDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(StudentDto), StatusCodes.Status404NotFound)]
@@ -58,19 +57,18 @@ public class StudentsController : ControllerBase
     }
     
     [HttpPost]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_STUDENT, ECommandCode.CREATE)]
     [ApiValidationFilter]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(StudentDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateStudent([FromBody] CreateStudentRequest request)
     {
         try
         {
-            await _studentsService.CreateStudentAsync(request);
+            var student = await _studentsService.CreateStudentAsync(request);
 
-            return Ok(new ApiCreatedResponse());
+            return Ok(new ApiCreatedResponse(student));
         }
         catch (BadRequestException e)
         {
@@ -83,7 +81,6 @@ public class StudentsController : ControllerBase
     }
     
     [HttpPut("{studentId}")]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_STUDENT, ECommandCode.UPDATE)]
     [ApiValidationFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -113,7 +110,6 @@ public class StudentsController : ControllerBase
     }
     
     [HttpDelete("{studentId}")]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_STUDENT, ECommandCode.DELETE)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

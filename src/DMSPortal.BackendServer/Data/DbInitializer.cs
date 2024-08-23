@@ -78,7 +78,7 @@ public class DbInitializer
                 FullName = "Admin",
                 Email = "admin@gmail.com",
                 PhoneNumber = new Faker("vi").Phone.PhoneNumber("####-###-###"),
-                Dob = (DateTimeOffset)(new Faker("vi").Person.DateOfBirth.ToUniversalTime()),
+                Dob = new Faker("vi").Person.DateOfBirth.ToUniversalTime(),
                 Gender = EGender.MALE,
                 Avatar = new Faker("vi").Internet.Avatar(),
                 Address = new Faker("vi").Address.ToString(),
@@ -107,7 +107,7 @@ public class DbInitializer
                 .RuleFor(u => u.FullName, f => f.Person.FullName)
                 .RuleFor(u => u.Email, f => f.Person.Email)
                 .RuleFor(u => u.PhoneNumber, f => f.Phone.PhoneNumber("####-###-###"))
-                .RuleFor(u => u.Dob, f => (DateTimeOffset)(f.Person.DateOfBirth.ToUniversalTime()))
+                .RuleFor(u => u.Dob, f => f.Person.DateOfBirth.ToUniversalTime())
                 .RuleFor(u => u.Gender, f => f.PickRandom<EGender>())
                 .RuleFor(u => u.Avatar, f => f.Internet.Avatar())
                 .RuleFor(u => u.Address, f => f.Address.ToString())
@@ -515,7 +515,7 @@ public class DbInitializer
             var studentFaker = new Faker<Student>("vi")
                 .RuleFor(x => x.FullName, f => f.Person.FullName)
                 .RuleFor(x => x.PhoneNumber, f => f.Phone.PhoneNumber("####-###-###"))
-                .RuleFor(x => x.DOB, f => (DateTimeOffset)(f.Person.DateOfBirth.ToUniversalTime()))
+                .RuleFor(x => x.DOB, f => f.Person.DateOfBirth.ToUniversalTime())
                 .RuleFor(x => x.Address, f => f.Address.ToString())
                 .RuleFor(x => x.Gender, f => f.PickRandom<EGender>())
                 .RuleFor(x => x.Height, f => f.Random.Int(100, 180))
@@ -551,7 +551,7 @@ public class DbInitializer
                     .RuleFor(x => x.ClassId, _ => joinedClass.Id)
                     .RuleFor(x => x.ClassType, f => f.PickRandom<EClassType>())
                     .RuleFor(x => x.PaymentStatus, f => f.PickRandom<EPaymentStatus>())
-                    .RuleFor(x => x.JoinedAt, f => (DateTimeOffset)f.Date.PastOffset().UtcDateTime)
+                    .RuleFor(x => x.JoinedAt, f => f.Date.PastOffset().UtcDateTime)
                     .RuleFor(x => x.Status, f => f.PickRandom<EStudentInClassStatus>());
 
                 var studentInClass = studentInClassFaker.Generate();
@@ -568,10 +568,10 @@ public class DbInitializer
     {
         if (!_context.Shifts.Any())
         {
-            var excuteDate = DateTimeOffset.ParseExact("07/04/2024", "dd/MM/yyyy", CultureInfo.InvariantCulture)
+            var excuteDate = DateTime.ParseExact("07/04/2024", "dd/MM/yyyy", CultureInfo.InvariantCulture)
                 .Subtract(TimeSpan.FromDays(100));
 
-            while (excuteDate < DateTimeOffset.UtcNow)
+            while (excuteDate < DateTime.UtcNow)
             {
                 var shifts = new List<Shift>
                 {
@@ -669,12 +669,12 @@ public class DbInitializer
                         ClassId = classInShift.ClassId,
                         ShiftId = classInShift.ShiftId,
                         StudentId = x.Id,
-                        CheckinAt = DateTimeOffset.ParseExact(
+                        CheckinAt = DateTime.ParseExact(
                             $"{classInShift.Shift.Date} {classInShift.Shift.StartTime}", "dd/MM/yyyy HH:mm",
-                            CultureInfo.InvariantCulture).UtcDateTime,
-                        CheckoutAt = DateTimeOffset.ParseExact(
+                            CultureInfo.InvariantCulture).ToUniversalTime(),
+                        CheckoutAt = DateTime.ParseExact(
                             $"{classInShift.Shift.Date} {classInShift.Shift.EndTime}", "dd/MM/yyyy HH:mm",
-                            CultureInfo.InvariantCulture).UtcDateTime
+                            CultureInfo.InvariantCulture).ToUniversalTime()
                     })
                     .ToList();
 

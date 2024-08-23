@@ -1,4 +1,4 @@
-﻿using DMSPortal.BackendServer.Authorization;
+﻿using DMSPortal.BackendServer.Attributes;
 using DMSPortal.BackendServer.Helpers.HttpResponses;
 using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.DTOs.Command;
@@ -20,7 +20,6 @@ public class CommandsController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.SYSTEM_COMMAND, ECommandCode.VIEW)]
     [ProducesResponseType(typeof(List<CommandDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]

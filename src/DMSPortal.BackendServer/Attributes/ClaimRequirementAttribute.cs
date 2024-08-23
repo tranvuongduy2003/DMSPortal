@@ -1,7 +1,8 @@
-﻿using DMSPortal.Models.Enums;
+﻿using DMSPortal.BackendServer.Authorization;
+using DMSPortal.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DMSPortal.BackendServer.Authorization;
+namespace DMSPortal.BackendServer.Attributes;
 
 public class ClaimRequirementAttribute : TypeFilterAttribute
 {

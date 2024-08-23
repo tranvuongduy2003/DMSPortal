@@ -1,4 +1,4 @@
-﻿using DMSPortal.Models.Models;
+﻿using DMSPortal.BackendServer.Models;
 
 namespace DMSPortal.BackendServer.Services.Interfaces;
 

@@ -67,11 +67,11 @@ public class PermissionsService : IPermissionsService
         {
             var function = await _unitOfWork.Functions.GetByIdAsync(request.FunctionId);
             if (function == null)
-                throw new NotFoundException("Funtion does not exist!");
+                throw new NotFoundException("Chức năng không tồn tại!");
 
             var command = await _unitOfWork.Commands.GetByIdAsync(request.CommandId);
             if (command == null)
-                throw new NotFoundException("Command does not exist!");
+                throw new NotFoundException("Thao tác không tồn tại!");
 
             var commandInFunction = await _unitOfWork.CommandInFunctions
                 .FindByCondition(cif =>
@@ -80,7 +80,7 @@ public class PermissionsService : IPermissionsService
                 .FirstOrDefaultAsync();
             
             if (commandInFunction != null)
-                throw new BadRequestException("Permission already exists!");
+                throw new BadRequestException("Quyền đã tồn tại!");
             
             if (request.Value == true)
             {
@@ -112,13 +112,13 @@ public class PermissionsService : IPermissionsService
         {
             var function = await _unitOfWork.Functions.GetByIdAsync(request.FunctionId);
             if (function == null)
-                throw new NotFoundException("Funtion does not exist!");
+                throw new NotFoundException("Chức năng đã tổn tại!");
     
             var role = await _roleManager.Roles
                 .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.Id.Equals(request.RoleId));
             if (role == null)
-                throw new NotFoundException("Role does not exist!");
+                throw new NotFoundException("Vai trò không tồn tại!");
 
             var permissions = await _unitOfWork.Permissions
                 .FindByCondition(p => p.FunctionId.Equals(request.FunctionId) 
@@ -127,7 +127,7 @@ public class PermissionsService : IPermissionsService
             if (request.Value == true)
             {
                 if (permissions.Count > 0)
-                    throw new BadRequestException("Permission already exists!");
+                    throw new BadRequestException("Quyền đã tổn tại!");
                 
                 permissions = await _unitOfWork.CommandInFunctions
                     .FindByCondition(cif => cif.FunctionId.Equals(request.FunctionId))
@@ -139,7 +139,7 @@ public class PermissionsService : IPermissionsService
             else
             {
                 if (permissions.Count <= 0)
-                    throw new BadRequestException("Permission does not exist!");
+                    throw new BadRequestException("Quyền không tồn tại!");
     
                 await _unitOfWork.Permissions.DeleteListAsync(permissions);
             }

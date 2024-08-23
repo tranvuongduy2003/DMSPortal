@@ -10,18 +10,18 @@ public class CreatePitchRequestValidator : AbstractValidator<CreatePitchRequest>
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .WithMessage("Name is required");
+            .WithMessage("Name không được để trống");
         
         RuleFor(x => x.BranchId)
             .NotEmpty()
-            .WithMessage("BranchId is required")
+            .WithMessage("BranchId không được để trống")
             .MaximumLength(50)
-            .WithMessage("BranchId must be less than 50 characters");
+            .WithMessage("BranchId phải có ít hơn 50 kí tự");
         
         RuleFor(x => x.Status)
             .NotEmpty()
-            .WithMessage("Status is required")
+            .WithMessage("Status không được để trống")
             .IsInEnum()
-            .WithMessage($"Status must be {nameof(EPitchStatus.UNDER_MAINTENANCE)}, {nameof(EPitchStatus.CLOSED)}, {nameof(EPitchStatus.BUSY)}, {nameof(EPitchStatus.AVAILABLE)} or {nameof(EPitchStatus.RESERVED)}");
+            .WithMessage($"Status phải là {nameof(EPitchStatus.UNDER_MAINTENANCE)}, {nameof(EPitchStatus.CLOSED)}, {nameof(EPitchStatus.BUSY)}, {nameof(EPitchStatus.AVAILABLE)} hoặc {nameof(EPitchStatus.RESERVED)}");
     }
 }

@@ -10,28 +10,28 @@ public class UpdateBranchRequestValidator : AbstractValidator<UpdateBranchReques
     {
         RuleFor(x => x.Id)
             .NotEmpty()
-            .WithMessage("Id is required")
+            .WithMessage("Id không được để trống")
             .MaximumLength(50)
-            .WithMessage("Id must be less than 50 characters");
+            .WithMessage("Id phải có ít hơn 50 kí tự");
         
         RuleFor(x => x.Name)
             .NotEmpty()
-            .WithMessage("Name is required");
+            .WithMessage("Name không được để trống");
         
         RuleFor(x => x.Address)
             .NotEmpty()
-            .WithMessage("Address is required");
+            .WithMessage("Address không được để trống");
         
         RuleFor(x => x.ManagerId)
             .NotEmpty()
-            .WithMessage("ManagerId is required")
+            .WithMessage("ManagerId không được để trống")
             .MaximumLength(50)
-            .WithMessage("ManagerId must be less than 50 characters");
+            .WithMessage("ManagerId phải có ít hơn 50 kí tự");
         
         RuleFor(x => x.Status)
             .NotEmpty()
-            .WithMessage("Status is required")
+            .WithMessage("Status không được để trống")
             .IsInEnum()
-            .WithMessage($"Status must be {nameof(EBranchStatus.FULL)}, {nameof(EBranchStatus.OPEN)}, {nameof(EBranchStatus.CLOSED)} or {nameof(EBranchStatus.UNDER_MAINTENANCE)}");
+            .WithMessage($"Status phải là {nameof(EBranchStatus.FULL)}, {nameof(EBranchStatus.OPEN)}, {nameof(EBranchStatus.CLOSED)} hoặc {nameof(EBranchStatus.UNDER_MAINTENANCE)}");
     }
 }

@@ -34,6 +34,10 @@ public static class ServiceExtensions
         string appCors)
     {
         services.AddControllers()
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            })
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -42,6 +46,7 @@ public static class ServiceExtensions
                     JsonIgnoreCondition.WhenWritingNull;
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
+
         services.AddCors(p =>
             p.AddPolicy(appCors, build =>
             {
@@ -77,7 +82,7 @@ public static class ServiceExtensions
         var jwtOptions = configuration.GetSection(nameof(JwtOptions))
             .Get<JwtOptions>();
         services.AddSingleton<JwtOptions>(jwtOptions);
-        
+
         var emailSettings = configuration.GetSection(nameof(EmailSettings))
             .Get<EmailSettings>();
         services.AddSingleton<EmailSettings>(emailSettings);
@@ -276,8 +281,8 @@ public static class ServiceExtensions
             .AddTransient<IShiftsService, ShiftsService>()
             .AddTransient<IStudentsService, StudentsService>()
             .AddTransient<ICommandsService, CommandsService>()
-            .AddTransient<IPermissionsService, PermissionsService >()
-            .AddTransient<IFunctionsService, FunctionsService >()
+            .AddTransient<IPermissionsService, PermissionsService>()
+            .AddTransient<IFunctionsService, FunctionsService>()
             .AddScoped(typeof(IRepositoryQueryBase<,>), typeof(RepositoryQueryBase<,>))
             .AddScoped(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>))
             .AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork))

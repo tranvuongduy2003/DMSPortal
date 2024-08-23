@@ -1,4 +1,4 @@
-using DMSPortal.BackendServer.Authorization;
+using DMSPortal.BackendServer.Attributes;
 using DMSPortal.BackendServer.Data.Entities;
 using DMSPortal.BackendServer.Helpers.HttpResponses;
 using DMSPortal.BackendServer.Services.Interfaces;
@@ -40,8 +40,8 @@ public class AuthController : ControllerBase
             request.Password ?? "");
 
         return signInResponse == null
-            ? Unauthorized(new ApiUnauthorizedResponse("Invalid credentials"))
-            : Ok(new ApiOkResponse(signInResponse, "Sign in successfully!"));
+            ? Unauthorized(new ApiUnauthorizedResponse("Thông tin đăng nhập"))
+            : Ok(new ApiOkResponse(signInResponse, "Đăng nhập thành công!"));
     }
 
     [HttpPost("logout")]
@@ -51,7 +51,7 @@ public class AuthController : ControllerBase
     {
         await _authService.SignOutAsync();
 
-        return Ok(new ApiOkResponse(new object(), "Sign out successfully!"));
+            return Ok(new ApiOkResponse(new object(), "Đăng xuất thành công!"));
     }
 
     [HttpPost("refresh-token")]
@@ -64,7 +64,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         if (request.RefreshToken.IsNullOrEmpty())
-            return BadRequest("Invalid token");
+            return BadRequest("invalid_token");
 
         var accessToken = Request.Headers[HeaderNames.Authorization]
             .ToString()
@@ -76,7 +76,7 @@ public class AuthController : ControllerBase
 
         return refreshResponse is null
             ? Unauthorized(new ApiUnauthorizedResponse("invalid_refresh_token"))
-            : Ok(new ApiOkResponse(refreshResponse, "Refresh token successfully!"));
+            : Ok(new ApiOkResponse(refreshResponse, "Làm mới token thành công!"));
     }
     
     [HttpPost("forgot-password")]
@@ -87,7 +87,7 @@ public class AuthController : ControllerBase
     {
         await _authService.ForgotPasswordAsync(request.Email, request.HostUrl);
 
-        return Ok(new ApiOkResponse("Forgot password successfully!"));
+        return Ok(new ApiOkResponse("Quên mật khẩu thành công!"));
     }
     
     [HttpPost("reset-password")]
@@ -100,7 +100,7 @@ public class AuthController : ControllerBase
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
-            return NotFound(new ApiNotFoundResponse("User does not exist"));
+            return NotFound(new ApiNotFoundResponse("Người dùng không tồn tại"));
 
         var result = await _userManager.ResetPasswordAsync(user, request.ResetCode, request.NewPassword);
         if (!result.Succeeded)
@@ -110,7 +110,6 @@ public class AuthController : ControllerBase
     }
 
     [HttpGet("profile")]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.SYSTEM_USER, ECommandCode.VIEW)]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

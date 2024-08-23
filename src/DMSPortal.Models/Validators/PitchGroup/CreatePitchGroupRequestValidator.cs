@@ -10,12 +10,12 @@ public class CreatePitchGroupRequestValidator: AbstractValidator<CreatePitchGrou
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .WithMessage("Name is required");
+            .WithMessage("Name không được để trống");
         
         RuleFor(x => x.Status)
             .NotEmpty()
-            .WithMessage("Status is required")
+            .WithMessage("Status không được để trống")
             .IsInEnum()
-            .WithMessage($"Status must be {nameof(EPitchGroupStatus.FULL)}, {nameof(EPitchGroupStatus.INACTIVE)} or {nameof(EPitchGroupStatus.AVAILABLE)}");
+            .WithMessage($"Status phải là {nameof(EPitchGroupStatus.FULL)}, {nameof(EPitchGroupStatus.INACTIVE)} hoặc {nameof(EPitchGroupStatus.AVAILABLE)}");
     }
 }

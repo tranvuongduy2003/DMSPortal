@@ -9,14 +9,14 @@ public class UpdatePermissionByRoleRequestValidator : AbstractValidator<UpdatePe
     {
         RuleFor(x => x.RoleId)
             .NotEmpty()
-            .WithMessage("RoleId is required");
+            .WithMessage("RoleId không được để trống");
         
         RuleFor(x => x.FunctionId)
             .NotEmpty()
-            .WithMessage("FunctionId is required");
+            .WithMessage("FunctionId không được để trống");
         
         RuleFor(x => x.Value)
             .NotNull()
-            .WithMessage("Value is required");
+            .WithMessage("Value không được để trống");
     }
 }

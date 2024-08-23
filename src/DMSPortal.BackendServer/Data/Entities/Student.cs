@@ -17,7 +17,7 @@ public class Student : IdentityEntityBase<string>
     [MaxLength(20)]
     public string? PhoneNumber { get; set; }
 
-    public DateTimeOffset DOB { get; set; }
+    public DateTime DOB { get; set; }
 
     [Column(TypeName = "text")]
     public string Address { get; set; }

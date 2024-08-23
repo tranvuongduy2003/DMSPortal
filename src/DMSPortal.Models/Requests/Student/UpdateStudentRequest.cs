@@ -10,7 +10,7 @@ public class UpdateStudentRequest
     
     public string? PhoneNumber { get; set; }
 
-    public DateTimeOffset DOB { get; set; }
+    public DateTime DOB { get; set; }
     
     public string Address { get; set; }
     

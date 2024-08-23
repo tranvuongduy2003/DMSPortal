@@ -1,4 +1,4 @@
-﻿namespace DMSPortal.Models.Models;
+﻿namespace DMSPortal.BackendServer.Models;
 
 public class Pagination<T>
 {

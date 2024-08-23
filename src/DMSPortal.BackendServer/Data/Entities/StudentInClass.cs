@@ -19,7 +19,7 @@ public class StudentInClass : EntityBase
     [MaxLength(50)]
     public string StudentId { get; set; }
 
-    public DateTimeOffset JoinedAt { get; set; }
+    public DateTime JoinedAt { get; set; }
 
     [Range(0, Double.PositiveInfinity)]
     public int? NumberOfAttendance { get; set; } = 0;

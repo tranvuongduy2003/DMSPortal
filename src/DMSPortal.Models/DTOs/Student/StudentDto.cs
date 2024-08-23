@@ -1,4 +1,5 @@
-﻿using DMSPortal.Models.DTOs.Note;
+﻿using System.Text.Json.Serialization;
+using DMSPortal.Models.DTOs.Note;
 using DMSPortal.Models.Enums;
 
 namespace DMSPortal.Models.DTOs.Student;
@@ -11,7 +12,7 @@ public class StudentDto
     
     public string? PhoneNumber { get; set; }
 
-    public DateTimeOffset DOB { get; set; }
+    public DateTime DOB { get; set; }
     
     public string Address { get; set; }
     
@@ -49,9 +50,9 @@ public class StudentDto
     
     public IEnumerable<NoteDto> Notes { get; set; }
     
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
     
-    public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     
-    public DateTimeOffset? DeletedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }

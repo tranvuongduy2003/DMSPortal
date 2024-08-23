@@ -1,5 +1,5 @@
-﻿using DMSPortal.Models.DTOs.Class;
-using DMSPortal.Models.Models;
+﻿using DMSPortal.BackendServer.Models;
+using DMSPortal.Models.DTOs.Class;
 using DMSPortal.Models.Requests.Class;
 
 namespace DMSPortal.BackendServer.Services.Interfaces;
@@ -10,7 +10,9 @@ public interface IClassesService
     
     Task<Pagination<ClassDto>> GetClassesByPitchIdAsync(string pitchId, PaginationFilter filter);
     
-    Task<bool> CreateClassAsync(CreateClassRequest request);
+    Task<ClassDto> GetClassByIdAsync(string classId);
+    
+    Task<ClassDto> CreateClassAsync(CreateClassRequest request);
     
     Task<bool> UpdateClassAsync(string classId, UpdateClassRequest request);
     

@@ -1,5 +1,6 @@
-using DMSPortal.BackendServer.Authorization;
+using DMSPortal.BackendServer.Attributes;
 using DMSPortal.BackendServer.Helpers.HttpResponses;
+using DMSPortal.BackendServer.Models;
 using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.DTOs.Branch;
 using DMSPortal.Models.DTOs.PitchGroup;
@@ -25,29 +26,27 @@ public class PitchGroupsController : ControllerBase
     }
     
     [HttpGet]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_PITCH_GROUP, ECommandCode.VIEW)]
-    [ProducesResponseType(typeof(List<PitchGroupDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Pagination<PitchGroupDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetPitchGroups()
+    public async Task<IActionResult> GetPitchGroups([FromQuery] PaginationFilter filter)
     {
-        var pitchGroups = await _pitchGroupsService.GetPitchGroupsAsync();
+        var pitchGroups = await _pitchGroupsService.GetPitchGroupsAsync(filter);
 
         return Ok(new ApiOkResponse(pitchGroups));
     }
     
     [HttpGet("{pitchGroupId}/branches")]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_PITCH_GROUP, ECommandCode.VIEW)]
     [ClaimRequirement(EFunctionCode.GENERAL_BRANCH, ECommandCode.VIEW)]
-    [ProducesResponseType(typeof(List<BranchDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Pagination<BranchDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetBranchesByPitchGroupId(string pitchGroupId)
+    public async Task<IActionResult> GetBranchesByPitchGroupId(string pitchGroupId, [FromQuery] PaginationFilter filter)
     {
         try
         {
-            var branches = await _branchesService.GetBranchesByPitchGroupIdAsync(pitchGroupId);
+            var branches = await _branchesService.GetBranchesByPitchGroupIdAsync(pitchGroupId, filter);
 
             return Ok(new ApiOkResponse(branches));
         }
@@ -61,20 +60,42 @@ public class PitchGroupsController : ControllerBase
         }
     }
     
+    [HttpGet("{pitchGroupId}")]
+    [ClaimRequirement(EFunctionCode.GENERAL_STUDENT, ECommandCode.VIEW)]
+    [ProducesResponseType(typeof(PitchGroupDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PitchGroupDto), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetPitchGroupById(string pitchGroupId)
+    {
+        try
+        {
+            var pitchGroup = await _pitchGroupsService.GetPitchGroupByIdAsync(pitchGroupId);
+
+            return Ok(new ApiOkResponse(pitchGroup));
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(new ApiNotFoundResponse(e.Message));
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    
     [HttpPost]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_PITCH_GROUP, ECommandCode.CREATE)]
     [ApiValidationFilter]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(PitchGroupDto),StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreatePitchGroup([FromBody] CreatePitchGroupRequest request)
     {
         try
         {
-            await _pitchGroupsService.CreatePitchGroupAsync(request);
+            var pitchGroupDto = await _pitchGroupsService.CreatePitchGroupAsync(request);
 
-            return Ok(new ApiCreatedResponse());
+            return Ok(new ApiCreatedResponse(pitchGroupDto));
         }
         catch (BadRequestException e)
         {
@@ -87,7 +108,6 @@ public class PitchGroupsController : ControllerBase
     }
     
     [HttpPut("{pitchGroupId}")]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_PITCH_GROUP, ECommandCode.UPDATE)]
     [ApiValidationFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -117,7 +137,6 @@ public class PitchGroupsController : ControllerBase
     }
     
     [HttpDelete("{pitchGroupId}")]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.GENERAL_PITCH_GROUP, ECommandCode.DELETE)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
