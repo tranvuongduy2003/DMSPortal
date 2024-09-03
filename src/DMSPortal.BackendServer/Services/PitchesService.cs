@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using DMSPortal.BackendServer.Data.Entities;
+using DMSPortal.BackendServer.Helpers;
 using DMSPortal.BackendServer.Infrastructure.Interfaces;
+using DMSPortal.BackendServer.Models;
 using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.DTOs.Pitch;
 using DMSPortal.Models.Exceptions;
 using DMSPortal.Models.Requests.Pitch;
+using Microsoft.EntityFrameworkCore;
 
 namespace DMSPortal.BackendServer.Services;
 
@@ -19,38 +22,65 @@ public class PitchesService : IPitchesService
         _mapper = mapper;
     }
 
-    public async Task<List<PitchDto>> GetPitchesAsync()
+    public async Task<Pagination<PitchDto>> GetPitchesAsync(PaginationFilter filter)
     {
-        var pitches = _unitOfWork.Pitches.FindAll();
+        var pitches = await _unitOfWork.Pitches
+            .FindAll()
+            .ToListAsync();
 
-        return _mapper.Map<List<PitchDto>>(pitches);
+        var pagination = PaginationHelper<Pitch>.Paginate(filter, pitches);
+
+        return new Pagination<PitchDto>
+        {
+            Items = _mapper.Map<List<PitchDto>>(pagination.Items),
+            Metadata = pagination.Metadata
+        };
     }
 
-    public async Task<List<PitchDto>> GetPitchesByBranchIdAsync(string branchId)
+    public async Task<Pagination<PitchDto>> GetPitchesByBranchIdAsync(string branchId, PaginationFilter filter)
     {
         var isBranchExisted = await _unitOfWork.Branches
             .ExistAsync(x => x.Id.Equals(branchId));
         if (!isBranchExisted)
-            throw new NotFoundException("Branch does not exist");
+            throw new NotFoundException("Chi nhánh không tồn tại");
 
-        var pitches = _unitOfWork.Pitches.FindByCondition(
-            x => x.BranchId.Equals(branchId));
+        var pitches = await _unitOfWork.Pitches
+            .FindByCondition(x => x.BranchId.Equals(branchId))
+            .ToListAsync();
 
-        return _mapper.Map<List<PitchDto>>(pitches);
+        var pagination = PaginationHelper<Pitch>.Paginate(filter, pitches);
+
+        return new Pagination<PitchDto>
+        {
+            Items = _mapper.Map<List<PitchDto>>(pagination.Items),
+            Metadata = pagination.Metadata
+        };
     }
 
-    public async Task<bool> CreatePitchAsync(CreatePitchRequest request)
+    public async Task<PitchDto> GetPitchByIdAsync(string pitchId)
+    {
+        var pitch = await _unitOfWork.Pitches
+            .FindByCondition(x => x.Id.Equals(pitchId))
+            .Include(x => x.Branch)
+            .FirstOrDefaultAsync();
+
+        if (pitch == null)
+            throw new NotFoundException("Sân không tồn tại");
+
+        return _mapper.Map<PitchDto>(pitch);
+    }
+
+    public async Task<PitchDto> CreatePitchAsync(CreatePitchRequest request)
     {
         var isPitchExisted =
             await _unitOfWork.Pitches
-                .ExistAsync(x =>
-                    x.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase));
+                .ExistAsync(x => x.Name.Equals(request.Name));
         if (isPitchExisted)
-            throw new BadRequestException($"Pitch with name {request.Name} existed");
+            throw new BadRequestException($"Sân {request.Name} đã tổn tại");
 
         var branch = await _unitOfWork.Branches.GetByIdAsync(request.BranchId);
         if (branch == null)
-            throw new NotFoundException($"Branch with id {request.BranchId} does not exist");
+            throw new NotFoundException($"Chi nhánh không tồn tại");
 
         var pitch = _mapper.Map<Pitch>(request);
         await _unitOfWork.Pitches.CreateAsync(pitch);
@@ -60,33 +90,24 @@ public class PitchesService : IPitchesService
 
         await _unitOfWork.CommitAsync();
 
-        return true;
+        return _mapper.Map<PitchDto>(pitch);
     }
 
     public async Task<bool> UpdatePitchAsync(string pitchId, UpdatePitchRequest request)
     {
-        await Task.WhenAll(new[]
-        {
-            new Task(async () =>
-            {
-                var isPitchExisted =
-                    await _unitOfWork.Pitches
-                        .ExistAsync(x => x.Id.Equals(pitchId));
-                if (!isPitchExisted)
-                    throw new NotFoundException($"Pitch with id {pitchId} does not exist");
-            }),
-            new Task(async () =>
-            {
-                var isPitchExisted =
-                    await _unitOfWork.Pitches
-                        .ExistAsync(x =>
-                            x.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase));
-                if (isPitchExisted)
-                    throw new BadRequestException($"Pitch with name {request.Name} existed");
-            }),
-        });
+        var pitch = await _unitOfWork.Pitches.GetByIdAsync(pitchId);
+        if (pitch == null)
+            throw new NotFoundException($"Sân không tồn tại");
 
-        var pitch = _mapper.Map<Pitch>(request);
+        var isPitchExistedByName =
+            await _unitOfWork.Pitches
+                .ExistAsync(x =>
+                    x.Name.Equals(request.Name));
+        if (isPitchExistedByName)
+            throw new BadRequestException($"Sân {request.Name} đã tổn tại");
+
+        pitch.Name = request.Name;
+        pitch.Status = request.Status;
         await _unitOfWork.Pitches.UpdateAsync(pitch);
         await _unitOfWork.CommitAsync();
 
@@ -97,12 +118,12 @@ public class PitchesService : IPitchesService
     {
         var pitch = await _unitOfWork.Pitches.GetByIdAsync(pitchId);
         if (pitch == null)
-            throw new NotFoundException($"Pitch with id {pitchId} does not exist");
+            throw new NotFoundException($"Sân không tồn tại");
 
         var isExistedClasses = await _unitOfWork.Classes
             .ExistAsync(x => x.PitchId.Equals(pitchId));
         if (isExistedClasses)
-            throw new BadRequestException("Existing classes belong to Pitch");
+            throw new BadRequestException("Sân vẫn còn chứa Lớp, không thể xóa Sân");
 
         var branch = await _unitOfWork.Branches.GetByIdAsync(pitch.BranchId);
 

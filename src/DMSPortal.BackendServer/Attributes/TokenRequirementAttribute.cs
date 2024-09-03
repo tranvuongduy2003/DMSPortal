@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DMSPortal.BackendServer.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace DMSPortal.BackendServer.Authorization;
+namespace DMSPortal.BackendServer.Attributes;
 
 public class TokenRequirementAttribute : TypeFilterAttribute
 {

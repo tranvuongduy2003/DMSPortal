@@ -20,9 +20,9 @@ public class Attendance : IdentityEntityBase<string>
     [MaxLength(50)]
     public string StudentId { get; set; }
 
-    public DateTimeOffset CheckinAt { get; set; }
+    public DateTime CheckinAt { get; set; }
 
-    public DateTimeOffset? CheckoutAt { get; set; }
+    public DateTime? CheckoutAt { get; set; }
 
     [ForeignKey("ClassId")]
     public virtual Class Class { get; set; }

@@ -14,7 +14,7 @@ public class UserDto
 
     public string PhoneNumber { get; set; }
 
-    public DateTimeOffset? Dob { get; set; }
+    public DateTime? Dob { get; set; }
 
     public EGender? Gender { get; set; }
 
@@ -26,9 +26,9 @@ public class UserDto
 
     public List<string> Roles { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
     
-    public DateTimeOffset? DeletedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
-    public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 }

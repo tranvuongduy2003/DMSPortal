@@ -10,8 +10,8 @@ public class CreateNoteRequestValidator : AbstractValidator<CreateNoteRequest>
     {
         RuleFor(x => x.Content)
             .NotEmpty()
-            .WithMessage("Content is required")
+            .WithMessage("Content không được để trống")
             .MaximumLength(1000)
-            .WithMessage("Content must be less than 1000 characters");
+            .WithMessage("Content phải có ít hơn 1000 kí tự");
     }
 }

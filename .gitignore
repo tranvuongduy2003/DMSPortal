@@ -419,9 +419,6 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
-/src/DMSPortal.BackendServer/appsettings.json
-/src/DMSPortal.BackendServer/appsettings.Development.json
-/src/DMSPortal.BackendServer/appsettings.Production.json
 
 # Logs
 logs

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DMSPortal.BackendServer.Data.Entities;
 using DMSPortal.Models.DTOs.Branch;
+using DMSPortal.Models.DTOs.Class;
 using DMSPortal.Models.DTOs.Command;
 using DMSPortal.Models.DTOs.Function;
 using DMSPortal.Models.DTOs.Note;
@@ -9,6 +10,7 @@ using DMSPortal.Models.DTOs.PitchGroup;
 using DMSPortal.Models.DTOs.Student;
 using DMSPortal.Models.DTOs.User;
 using DMSPortal.Models.Requests.Branch;
+using DMSPortal.Models.Requests.Class;
 using DMSPortal.Models.Requests.Note;
 using DMSPortal.Models.Requests.Pitch;
 using DMSPortal.Models.Requests.PitchGroup;
@@ -34,9 +36,14 @@ public class MappingProfile : Profile
         CreateMap<CreateBranchRequest, Branch>();
         CreateMap<UpdateBranchRequest, Branch>().ReverseMap();
         
+        CreateMap<Class, ClassDto>().ReverseMap();
+        CreateMap<CreateClassRequest, Class>();
+        CreateMap<UpdateClassRequest, Class>().ReverseMap();
+        
         CreateMap<Pitch, PitchDto>().ReverseMap();
         CreateMap<CreatePitchRequest, Pitch>();
         CreateMap<UpdatePitchRequest, Pitch>().ReverseMap();
+        
         
         CreateMap<Note, NoteDto>().ReverseMap();
         CreateMap<CreateNoteRequest, Note>();

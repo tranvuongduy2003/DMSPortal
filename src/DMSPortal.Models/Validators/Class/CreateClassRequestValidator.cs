@@ -10,18 +10,18 @@ public class CreateClassRequestValidator : AbstractValidator<CreateClassRequest>
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .WithMessage("Name is required");
+            .WithMessage("Name không được để trống");
         
         RuleFor(x => x.PitchId)
             .NotEmpty()
-            .WithMessage("PitchId is required")
+            .WithMessage("PitchId không được để trống")
             .MaximumLength(50)
-            .WithMessage("PitchId must be less than 50 characters");
+            .WithMessage("PitchId phải có ít hơn 50 kí tự");
         
         RuleFor(x => x.Status)
             .NotEmpty()
-            .WithMessage("Status is required")
+            .WithMessage("Status không được để trống")
             .IsInEnum()
-            .WithMessage($"Status must be {nameof(EClassStatus.FULL)}, {nameof(EClassStatus.CANCELED)}, {nameof(EClassStatus.COMPLETED)}, {nameof(EClassStatus.IN_PROGRESS)}, {nameof(EClassStatus.POSTPONED)}, {nameof(EClassStatus.SCHEDULED)} or {nameof(EClassStatus.OPEN_FOR_ENROLLMENT)}");
+            .WithMessage($"Status phải là {nameof(EClassStatus.FULL)}, {nameof(EClassStatus.CANCELED)}, {nameof(EClassStatus.COMPLETED)}, {nameof(EClassStatus.IN_PROGRESS)}, {nameof(EClassStatus.POSTPONED)}, {nameof(EClassStatus.SCHEDULED)} hoặc {nameof(EClassStatus.OPEN_FOR_ENROLLMENT)}");
     }
 }

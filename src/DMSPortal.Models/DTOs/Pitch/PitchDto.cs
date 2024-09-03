@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using DMSPortal.Models.DTOs.Branch;
+﻿using DMSPortal.Models.DTOs.Branch;
 using DMSPortal.Models.DTOs.Class;
 using DMSPortal.Models.Enums;
 
@@ -19,11 +18,11 @@ public class PitchDto
     
     public BranchDto Branch { get; set; }
     
-    public IEnumerator<ClassDto> Classes { get; set; }
+    public IEnumerable<ClassDto> Classes { get; set; }
     
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
     
-    public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     
-    public DateTimeOffset? DeletedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }

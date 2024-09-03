@@ -1,4 +1,4 @@
-﻿using DMSPortal.BackendServer.Authorization;
+﻿using DMSPortal.BackendServer.Attributes;
 using DMSPortal.BackendServer.Helpers.HttpResponses;
 using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.DTOs.Permission;
@@ -22,7 +22,6 @@ public class PermissionsController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.SYSTEM_PERMISSION, ECommandCode.VIEW)]
     [ProducesResponseType(typeof(List<PermissionScreenDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -34,7 +33,6 @@ public class PermissionsController : ControllerBase
     }
 
     [HttpGet("roles")]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.SYSTEM_PERMISSION, ECommandCode.VIEW)]
     [ProducesResponseType(typeof(List<RolePermissionDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -46,7 +44,6 @@ public class PermissionsController : ControllerBase
     }
 
     [HttpPut]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.SYSTEM_PERMISSION, ECommandCode.UPDATE)]
     [ProducesResponseType(typeof(List<PermissionScreenDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -75,7 +72,6 @@ public class PermissionsController : ControllerBase
     }
 
     [HttpPut("roles")]
-    [Authorize]
     [ClaimRequirement(EFunctionCode.SYSTEM_PERMISSION, ECommandCode.UPDATE)]
     [ProducesResponseType(typeof(List<RolePermissionDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -7,6 +7,8 @@ namespace DMSPortal.Models.DTOs.Branch;
 
 public class BranchDto
 {
+    public string Id { get; set; }
+    
     public string Name { get; set; }
     
     public string Address { get; set; }
@@ -25,7 +27,7 @@ public class BranchDto
     
     public IEnumerable<PitchDto> Pitches { get; set; }
     
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
     
     public DateTimeOffset? UpdatedAt { get; set; }
     

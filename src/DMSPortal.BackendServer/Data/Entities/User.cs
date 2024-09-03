@@ -14,7 +14,7 @@ public class User : IdentityUser, IDateTracking
     [Column(TypeName = "text")]
     public string? FullName { get; set; }
 
-    public DateTimeOffset? Dob { get; set; }
+    public DateTime? Dob { get; set; }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public EGender? Gender { get; set; }
@@ -32,12 +32,12 @@ public class User : IdentityUser, IDateTracking
     [Range(0, Double.PositiveInfinity)]
     public int? NumberOfBranches { get; set; } = 0;
 
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
     
 
-    public DateTimeOffset? DeletedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
-    public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     
     public virtual ICollection<Branch>? Branches { get; set; } = new List<Branch>();
 }

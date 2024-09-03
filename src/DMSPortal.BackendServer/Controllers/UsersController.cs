@@ -2,49 +2,48 @@
 using DMSPortal.BackendServer.Helpers.HttpResponses;
 using DMSPortal.BackendServer.Models;
 using DMSPortal.BackendServer.Services.Interfaces;
-using DMSPortal.Models.DTOs.Student;
+using DMSPortal.Models.DTOs.User;
 using DMSPortal.Models.Enums;
 using DMSPortal.Models.Exceptions;
-using DMSPortal.Models.Requests.Student;
-using Microsoft.AspNetCore.Authorization;
+using DMSPortal.Models.Requests.User;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DMSPortal.BackendServer.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class StudentsController : ControllerBase
+public class UsersController : ControllerBase
 {
-    private readonly IStudentsService _studentsService;
+    private readonly IUsersService _usersService;
 
-    public StudentsController(IStudentsService studentsService)
+    public UsersController(IUsersService usersService)
     {
-        _studentsService = studentsService;
+        _usersService = usersService;
     }
     
     [HttpGet]
-    [ClaimRequirement(EFunctionCode.GENERAL_STUDENT, ECommandCode.VIEW)]
-    [ProducesResponseType(typeof(List<StudentDto>), StatusCodes.Status200OK)]
+    [ClaimRequirement(EFunctionCode.SYSTEM_USER, ECommandCode.VIEW)]
+    [ProducesResponseType(typeof(List<UserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetStudents([FromQuery] PaginationFilter filter)
+    public async Task<IActionResult> GetUsers([FromQuery] PaginationFilter filter)
     {
-        var students = await _studentsService.GetStudentsAsync(filter);
+        var users = await _usersService.GetUsersAsync(filter);
 
-        return Ok(new ApiOkResponse(students));
+        return Ok(new ApiOkResponse(users));
     }
     
-    [HttpGet("{studentId}")]
-    [ClaimRequirement(EFunctionCode.GENERAL_STUDENT, ECommandCode.VIEW)]
-    [ProducesResponseType(typeof(StudentDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(StudentDto), StatusCodes.Status404NotFound)]
+    [HttpGet("{userId}")]
+    [ClaimRequirement(EFunctionCode.SYSTEM_USER, ECommandCode.VIEW)]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetStudentById(string studentId)
+    public async Task<IActionResult> GetUserById(string userId)
     {
         try
         {
-            var student = await _studentsService.GetStudentByIdAsync(studentId);
+            var user = await _usersService.GetUserByIdAsync(userId);
 
-            return Ok(new ApiOkResponse(student));
+            return Ok(new ApiOkResponse(user));
         }
         catch (NotFoundException e)
         {
@@ -57,18 +56,18 @@ public class StudentsController : ControllerBase
     }
     
     [HttpPost]
-    [ClaimRequirement(EFunctionCode.GENERAL_STUDENT, ECommandCode.CREATE)]
+    [ClaimRequirement(EFunctionCode.SYSTEM_USER, ECommandCode.CREATE)]
     [ApiValidationFilter]
-    [ProducesResponseType(typeof(StudentDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreateStudent([FromBody] CreateStudentRequest request)
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
     {
         try
         {
-            var student = await _studentsService.CreateStudentAsync(request);
+            var user = await _usersService.CreateUserAsync(request);
 
-            return Ok(new ApiCreatedResponse(student));
+            return Ok(new ApiCreatedResponse(user));
         }
         catch (BadRequestException e)
         {
@@ -80,18 +79,18 @@ public class StudentsController : ControllerBase
         }
     }
     
-    [HttpPut("{studentId}")]
-    [ClaimRequirement(EFunctionCode.GENERAL_STUDENT, ECommandCode.UPDATE)]
+    [HttpPut("{userId}")]
+    [ClaimRequirement(EFunctionCode.SYSTEM_USER, ECommandCode.UPDATE)]
     [ApiValidationFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UpdateStudent(string studentId, [FromBody] UpdateStudentRequest request)
+    public async Task<IActionResult> UpdateUser(string userId, [FromBody] UpdateUserRequest request)
     {
         try
         {
-            await _studentsService.UpdateStudentAsync(studentId, request);
+            await _usersService.UpdateUserAsync(userId, request);
 
             return Ok(new ApiOkResponse());
         }
@@ -109,17 +108,17 @@ public class StudentsController : ControllerBase
         }
     }
     
-    [HttpDelete("{studentId}")]
-    [ClaimRequirement(EFunctionCode.GENERAL_STUDENT, ECommandCode.DELETE)]
+    [HttpDelete("{userId}")]
+    [ClaimRequirement(EFunctionCode.SYSTEM_USER, ECommandCode.DELETE)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> DeleteStudent(string studentId)
+    public async Task<IActionResult> DeleteUser(string userId)
     {
         try
         {
-            await _studentsService.DeleteStudentAsync(studentId);
+            await _usersService.DeleteUserAsync(userId);
 
             return Ok(new ApiOkResponse());
         }
