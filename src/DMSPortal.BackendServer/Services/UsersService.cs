@@ -45,7 +45,10 @@ public class UsersService : IUsersService
         if (user == null || user.DeletedAt != null)
             throw new NotFoundException("Người dùng không tồn tại");
 
-        return _mapper.Map<UserDto>(user);
+        var userDto = _mapper.Map<UserDto>(user);
+        var userRoles = await _userManager.GetRolesAsync(user);
+        userDto.Roles = userRoles.ToList();
+        return userDto;
     }
 
     public async Task<UserDto> CreateUserAsync(CreateUserRequest request)
