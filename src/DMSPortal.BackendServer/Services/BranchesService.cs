@@ -79,7 +79,7 @@ public class BranchesService : IBranchesService
         var isBranchExisted =
             await _unitOfWork.Branches
                 .ExistAsync(x =>
-                    x.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase));
+                    x.Name.Equals(request.Name));
         if (isBranchExisted)
             throw new BadRequestException($"Chi nhánh {request.Name} đã tồn tại");
 
@@ -107,34 +107,24 @@ public class BranchesService : IBranchesService
 
     public async Task<bool> UpdateBranchAsync(string branchId, UpdateBranchRequest request)
     {
-        await Task.WhenAll(new[]
-        {
-            new Task(async () =>
-            {
-                var isBranchExisted =
-                    await _unitOfWork.Branches
-                        .ExistAsync(x => x.Id.Equals(branchId));
-                if (!isBranchExisted)
-                    throw new NotFoundException($"Chi nhánh không tồn tại");
-            }),
-            new Task(async () =>
-            {
-                var isBranchExisted =
-                    await _unitOfWork.Branches
-                        .ExistAsync(x =>
-                            x.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase));
-                if (isBranchExisted)
-                    throw new BadRequestException($"Chi nhánh {request.Name} đã tồn tại");
-            }),
-            new Task(async () =>
-            {
-                var manager = await _userManager.FindByIdAsync(request.ManagerId);
-                if (manager == null)
-                    throw new NotFoundException($"Cụm sân không tồn tại");
-            })
-        });
+        var branch = await _unitOfWork.Branches.GetByIdAsync(branchId);
+        if (branch == null)
+            throw new NotFoundException($"Chi nhánh không tồn tại");
+        
+        // var isBranchExistedByName =
+        //     await _unitOfWork.Branches
+        //         .ExistAsync(x => x.Name.Equals(request.Name));
+        // if (isBranchExistedByName)
+        //     throw new BadRequestException($"Chi nhánh {request.Name} đã tồn tại");
+        
+        var manager = await _userManager.FindByIdAsync(request.ManagerId);
+        if (manager == null)
+            throw new NotFoundException($"Cụm sân không tồn tại");
 
-        var branch = _mapper.Map<Branch>(request);
+        branch.Name = request.Name;
+        branch.Address = request.Address;
+        branch.Status = request.Status;
+        branch.ManagerId = request.ManagerId;
         await _unitOfWork.Branches.UpdateAsync(branch);
         await _unitOfWork.CommitAsync();
 

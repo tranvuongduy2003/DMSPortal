@@ -25,6 +25,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace DMSPortal.BackendServer.Extensions;
 
@@ -37,6 +38,7 @@ public static class ServiceExtensions
             .AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
             })
             .AddJsonOptions(options =>
             {

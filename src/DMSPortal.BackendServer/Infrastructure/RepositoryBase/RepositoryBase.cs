@@ -52,15 +52,13 @@ public class RepositoryBase<T> : RepositoryQueryBase<T>, IRepositoryBase<T> wher
 
     public T Update(T entity)
     {
-        if (_dbContext.Entry(entity).State != EntityState.Unchanged)
-            _dbContext.Entry(entity).CurrentValues.SetValues(entity);
+        _dbContext.Entry(entity).CurrentValues.SetValues(entity);
         return entity;
     }
 
     public async Task<T> UpdateAsync(T entity)
     {
-        if (_dbContext.Entry(entity).State != EntityState.Unchanged)
-            _dbContext.Entry(entity).CurrentValues.SetValues(entity);
+        _dbContext.Entry(entity).CurrentValues.SetValues(entity);
         return entity;
     }
 
@@ -139,25 +137,17 @@ public class RepositoryBase<T, K> : RepositoryQueryBase<T, K>, IRepositoryBase<T
 
     public T Update(T entity)
     {
-        if (_dbContext.Entry(entity).State != EntityState.Unchanged)
-        {
-            T exist = _dbContext.Set<T>().Find(entity.Id);
-            if (exist == null || exist.IsDeleted) return entity;
-            _dbContext.Entry(exist).CurrentValues.SetValues(entity);
-        }
-
+        T exist = _dbContext.Set<T>().Find(entity.Id);
+        if (exist == null || exist.IsDeleted) return entity;
+        _dbContext.Entry(exist).CurrentValues.SetValues(entity);
         return entity;
     }
 
     public async Task<T> UpdateAsync(T entity)
     {
-        if (_dbContext.Entry(entity).State == EntityState.Unchanged)
-        {
-            T exist = _dbContext.Set<T>().Find(entity.Id);
-            if (exist == null || exist.IsDeleted) return entity;
-            _dbContext.Entry(exist).CurrentValues.SetValues(entity);
-        }
-
+        T exist = _dbContext.Set<T>().Find(entity.Id);
+        if (exist == null || exist.IsDeleted) return entity;
+        _dbContext.Entry(exist).CurrentValues.SetValues(entity);
         return entity;
     }
 

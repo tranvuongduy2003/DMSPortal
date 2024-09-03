@@ -63,10 +63,10 @@ public class PitchesService : IPitchesService
             .FindByCondition(x => x.Id.Equals(pitchId))
             .Include(x => x.Branch)
             .FirstOrDefaultAsync();
-        
+
         if (pitch == null)
             throw new NotFoundException("Sân không tồn tại");
-        
+
         return _mapper.Map<PitchDto>(pitch);
     }
 
@@ -74,8 +74,7 @@ public class PitchesService : IPitchesService
     {
         var isPitchExisted =
             await _unitOfWork.Pitches
-                .ExistAsync(x =>
-                    x.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase));
+                .ExistAsync(x => x.Name.Equals(request.Name));
         if (isPitchExisted)
             throw new BadRequestException($"Sân {request.Name} đã tổn tại");
 
@@ -96,28 +95,19 @@ public class PitchesService : IPitchesService
 
     public async Task<bool> UpdatePitchAsync(string pitchId, UpdatePitchRequest request)
     {
-        await Task.WhenAll(new[]
-        {
-            new Task(async () =>
-            {
-                var isPitchExisted =
-                    await _unitOfWork.Pitches
-                        .ExistAsync(x => x.Id.Equals(pitchId));
-                if (!isPitchExisted)
-                    throw new NotFoundException($"Sân không tồn tại");
-            }),
-            new Task(async () =>
-            {
-                var isPitchExisted =
-                    await _unitOfWork.Pitches
-                        .ExistAsync(x =>
-                            x.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase));
-                if (isPitchExisted)
-                    throw new BadRequestException($"Sân {request.Name} đã tổn tại");
-            }),
-        });
+        var pitch = await _unitOfWork.Pitches.GetByIdAsync(pitchId);
+        if (pitch == null)
+            throw new NotFoundException($"Sân không tồn tại");
 
-        var pitch = _mapper.Map<Pitch>(request);
+        var isPitchExistedByName =
+            await _unitOfWork.Pitches
+                .ExistAsync(x =>
+                    x.Name.Equals(request.Name));
+        if (isPitchExistedByName)
+            throw new BadRequestException($"Sân {request.Name} đã tổn tại");
+
+        pitch.Name = request.Name;
+        pitch.Status = request.Status;
         await _unitOfWork.Pitches.UpdateAsync(pitch);
         await _unitOfWork.CommitAsync();
 

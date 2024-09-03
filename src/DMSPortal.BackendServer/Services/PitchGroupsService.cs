@@ -52,7 +52,7 @@ public class PitchGroupsService : IPitchGroupsService
         var isPitchGroupExisted =
             await _unitOfWork.PitchGroups
                 .ExistAsync(x => 
-                    x.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase));
+                    x.Name.Equals(request.Name));
         if (isPitchGroupExisted)
             throw new BadRequestException($"Cụm sân {request.Name} đã tổn tại");
 
@@ -66,27 +66,18 @@ public class PitchGroupsService : IPitchGroupsService
 
     public async Task<bool> UpdatePitchGroupAsync(string pitchGroupId, UpdatePitchGroupRequest request)
     {
-        await Task.WhenAll(new[]
-        {
-            new Task(async () =>
-            {
-                var isPitchGroupExisted =
-                    await _unitOfWork.PitchGroups
-                        .ExistAsync(x => x.Id.Equals(pitchGroupId));
-                if (!isPitchGroupExisted)
-                    throw new NotFoundException("Cụm sân không tồn tại");
-            }),
-            new Task(async () =>
-            {
-                var isPitchGroupExisted =
-                    await _unitOfWork.PitchGroups
-                        .ExistAsync(x =>
-                            x.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase));
-                if (isPitchGroupExisted)
-                    throw new BadRequestException($"Cụm sân {request.Name} đã tổn tại");
-            })
-        });
-
+        var isPitchGroupExistedById =
+            await _unitOfWork.PitchGroups
+                .ExistAsync(x => x.Id.Equals(pitchGroupId));
+        if (!isPitchGroupExistedById)
+            throw new NotFoundException("Cụm sân không tồn tại");
+        
+        var isPitchGroupExistedByName =
+            await _unitOfWork.PitchGroups
+                .ExistAsync(x => x.Name.Equals(request.Name));
+        if (isPitchGroupExistedByName)
+            throw new BadRequestException($"Cụm sân {request.Name} đã tổn tại");
+        
         var pitchGroup = _mapper.Map<PitchGroup>(request);
         await _unitOfWork.PitchGroups.UpdateAsync(pitchGroup);
         
