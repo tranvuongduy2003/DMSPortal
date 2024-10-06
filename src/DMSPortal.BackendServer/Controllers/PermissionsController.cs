@@ -1,9 +1,10 @@
-﻿using DMSPortal.BackendServer.Attributes;
-using DMSPortal.BackendServer.Helpers.HttpResponses;
-using DMSPortal.BackendServer.Services.Interfaces;
+﻿using DMSPortal.BackendServer.Abstractions.Services;
+using DMSPortal.BackendServer.Abstractions.UseCases;
+using DMSPortal.BackendServer.Attributes;
 using DMSPortal.Models.DTOs.Permission;
 using DMSPortal.Models.Enums;
 using DMSPortal.Models.Exceptions;
+using DMSPortal.Models.HttpResponses;
 using DMSPortal.Models.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +15,11 @@ namespace DMSPortal.BackendServer.Controllers;
 [ApiController]
 public class PermissionsController : ControllerBase
 {
-    private readonly IPermissionsService _permissionsService;
+    private readonly IPermissionsUseCase _permissionsUseCase;
 
-    public PermissionsController(IPermissionsService permissionsService)
+    public PermissionsController(IPermissionsUseCase permissionsUseCase)
     {
-        _permissionsService = permissionsService;
+        _permissionsUseCase = permissionsUseCase;
     }
 
     [HttpGet]
@@ -27,7 +28,7 @@ public class PermissionsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetCommandViews()
     {
-        var permissions = await _permissionsService.GetCommandViewsAsync();
+        var permissions = await _permissionsUseCase.GetCommandViewsAsync();
 
         return Ok(new ApiOkResponse(permissions));
     }
@@ -38,7 +39,7 @@ public class PermissionsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetRolePermissions()
     {
-        var roles = await _permissionsService.GetRolePermissionsAsync();
+        var roles = await _permissionsUseCase.GetRolePermissionsAsync();
 
         return Ok(new ApiOkResponse(roles));
     }
@@ -53,7 +54,7 @@ public class PermissionsController : ControllerBase
     {
         try
         {
-            await _permissionsService.UpdatePermissionByCommand(request);
+            await _permissionsUseCase.UpdatePermissionByCommand(request);
 
             return await GetCommandViews();
         }
@@ -81,7 +82,7 @@ public class PermissionsController : ControllerBase
     {
         try
         {
-            await _permissionsService.UpdatePermissionByRole(request);
+            await _permissionsUseCase.UpdatePermissionByRole(request);
 
             return await GetRolePermissions();
         }

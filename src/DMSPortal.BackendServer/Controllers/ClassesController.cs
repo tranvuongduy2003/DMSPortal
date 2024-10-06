@@ -1,11 +1,12 @@
-﻿using DMSPortal.BackendServer.Attributes;
-using DMSPortal.BackendServer.Helpers.HttpResponses;
-using DMSPortal.BackendServer.Models;
-using DMSPortal.BackendServer.Services.Interfaces;
+﻿using DMSPortal.BackendServer.Abstractions.Services;
+using DMSPortal.BackendServer.Abstractions.UseCases;
+using DMSPortal.BackendServer.Attributes;
+using DMSPortal.Models.Common;
 using DMSPortal.Models.DTOs.Class;
 using DMSPortal.Models.DTOs.Student;
 using DMSPortal.Models.Enums;
 using DMSPortal.Models.Exceptions;
+using DMSPortal.Models.HttpResponses;
 using DMSPortal.Models.Requests.Class;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +17,13 @@ namespace DMSPortal.BackendServer.Controllers;
 [ApiController]
 public class ClassesController : ControllerBase
 {
-    private readonly IClassesService _classesService;
-    private readonly IStudentsService _studentsService;
+    private readonly IClassesUseCase _classesUseCase;
+    private readonly IStudentsUseCase _studentsUseCase;
 
-    public ClassesController(IClassesService classesService, IStudentsService studentsService)
+    public ClassesController(IClassesUseCase classesUseCase, IStudentsUseCase studentsUseCase)
     {
-        _classesService = classesService;
-        _studentsService = studentsService;
+        _classesUseCase = classesUseCase;
+        _studentsUseCase = studentsUseCase;
     }
     
     [HttpGet]
@@ -31,7 +32,7 @@ public class ClassesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetClasses([FromQuery] PaginationFilter filter)
     {
-        var classes = await _classesService.GetClassesAsync(filter);
+        var classes = await _classesUseCase.GetClassesAsync(filter);
 
         return Ok(new ApiOkResponse(classes));
     }
@@ -46,7 +47,7 @@ public class ClassesController : ControllerBase
     {
         try
         {
-            var students = await _studentsService.GetStudentsByClassIdAsync(classId, filter);
+            var students = await _studentsUseCase.GetStudentsByClassIdAsync(classId, filter);
 
             return Ok(new ApiOkResponse(students));
         }
@@ -69,7 +70,7 @@ public class ClassesController : ControllerBase
     {
         try
         {
-            var classDto = await _classesService.GetClassByIdAsync(classId);
+            var classDto = await _classesUseCase.GetClassByIdAsync(classId);
 
             return Ok(new ApiOkResponse(classDto));
         }
@@ -93,7 +94,7 @@ public class ClassesController : ControllerBase
     {
         try
         {
-            var classDto = await _classesService.CreateClassAsync(request);
+            var classDto = await _classesUseCase.CreateClassAsync(request);
 
             return Ok(new ApiCreatedResponse(classDto));
         }
@@ -118,7 +119,7 @@ public class ClassesController : ControllerBase
     {
         try
         {
-            await _classesService.UpdateClassAsync(classId, request);
+            await _classesUseCase.UpdateClassAsync(classId, request);
 
             return Ok(new ApiOkResponse());
         }
@@ -146,7 +147,7 @@ public class ClassesController : ControllerBase
     {
         try
         {
-            await _classesService.DeleteClassAsync(classId);
+            await _classesUseCase.DeleteClassAsync(classId);
 
             return Ok(new ApiOkResponse());
         }

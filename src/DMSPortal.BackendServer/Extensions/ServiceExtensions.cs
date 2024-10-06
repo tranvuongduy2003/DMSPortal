@@ -2,14 +2,16 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DMSPortal.BackendServer.Abstractions.Repository;
+using DMSPortal.BackendServer.Abstractions.Repository.Contracts;
+using DMSPortal.BackendServer.Abstractions.Services;
+using DMSPortal.BackendServer.Abstractions.UnitOfWork;
+using DMSPortal.BackendServer.Abstractions.UseCases;
 using DMSPortal.BackendServer.Data;
 using DMSPortal.BackendServer.Data.Entities;
-using DMSPortal.BackendServer.Infrastructure.Interfaces;
-using DMSPortal.BackendServer.Infrastructure.RepositoryBase;
 using DMSPortal.BackendServer.Repositories;
-using DMSPortal.BackendServer.Repositories.Contracts;
 using DMSPortal.BackendServer.Services;
-using DMSPortal.BackendServer.Services.Interfaces;
+using DMSPortal.BackendServer.UseCases;
 using DMSPortal.Models.Configurations;
 using FluentValidation.AspNetCore;
 using Hangfire;
@@ -273,18 +275,18 @@ public static class ServiceExtensions
             .AddTransient<ICacheService, CacheService>()
             .AddTransient<IHangfireService, HangfireService>()
             .AddTransient<ISerializeService, SerializeService>()
-            .AddScoped<IAttendancesService, AttendancesService>()
-            .AddTransient<IAuthService, AuthService>()
-            .AddTransient<IBranchesService, BranchesService>()
-            .AddTransient<IClassesService, ClassesService>()
-            .AddTransient<INotesService, NotesService>()
-            .AddTransient<IPitchesService, PitchesService>()
-            .AddTransient<IPitchGroupsService, PitchGroupsService>()
-            .AddTransient<IShiftsService, ShiftsService>()
-            .AddTransient<IStudentsService, StudentsService>()
-            .AddTransient<ICommandsService, CommandsService>()
-            .AddTransient<IPermissionsService, PermissionsService>()
-            .AddTransient<IFunctionsService, FunctionsService>()
+            .AddScoped<IAttendancesUseCase, AttendancesUseCase>()
+            .AddTransient<IAuthUseCase, AuthUseCase>()
+            .AddTransient<IBranchesUseCase, BranchesUseCase>()
+            .AddTransient<IClassesUseCase, ClassesUseCase>()
+            .AddTransient<INotesUseCase, NotesUseCase>()
+            .AddTransient<IPitchesUseCase, PitchesUseCase>()
+            .AddTransient<IPitchGroupsUseCase, PitchGroupsUseCase>()
+            .AddTransient<IShiftsUseCase, ShiftsUseCase>()
+            .AddTransient<IStudentsUseCase, StudentsUseCase>()
+            .AddTransient<ICommandsUseCase, CommandsUseCase>()
+            .AddTransient<IPermissionsUseCase, PermissionsUseCase>()
+            .AddTransient<IFunctionsUseCase, FunctionsUseCase>()
             .AddScoped(typeof(IRepositoryQueryBase<,>), typeof(RepositoryQueryBase<,>))
             .AddScoped(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>))
             .AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork))

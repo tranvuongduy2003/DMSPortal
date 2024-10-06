@@ -1,11 +1,12 @@
+using DMSPortal.BackendServer.Abstractions.Services;
+using DMSPortal.BackendServer.Abstractions.UseCases;
 using DMSPortal.BackendServer.Attributes;
-using DMSPortal.BackendServer.Helpers.HttpResponses;
-using DMSPortal.BackendServer.Models;
-using DMSPortal.BackendServer.Services.Interfaces;
+using DMSPortal.Models.Common;
 using DMSPortal.Models.DTOs.Branch;
 using DMSPortal.Models.DTOs.PitchGroup;
 using DMSPortal.Models.Enums;
 using DMSPortal.Models.Exceptions;
+using DMSPortal.Models.HttpResponses;
 using DMSPortal.Models.Requests.PitchGroup;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +17,13 @@ namespace DMSPortal.BackendServer.Controllers;
 [ApiController]
 public class PitchGroupsController : ControllerBase
 {
-    private readonly IPitchGroupsService _pitchGroupsService;
-    private readonly IBranchesService _branchesService;
+    private readonly IPitchGroupsUseCase _pitchGroupsUseCase;
+    private readonly IBranchesUseCase _branchesUseCase;
 
-    public PitchGroupsController(IPitchGroupsService pitchGroupsService, IBranchesService branchesService)
+    public PitchGroupsController(IPitchGroupsUseCase pitchGroupsUseCase, IBranchesUseCase branchesUseCase)
     {
-        _pitchGroupsService = pitchGroupsService;
-        _branchesService = branchesService;
+        _pitchGroupsUseCase = pitchGroupsUseCase;
+        _branchesUseCase = branchesUseCase;
     }
     
     [HttpGet]
@@ -31,7 +32,7 @@ public class PitchGroupsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetPitchGroups([FromQuery] PaginationFilter filter)
     {
-        var pitchGroups = await _pitchGroupsService.GetPitchGroupsAsync(filter);
+        var pitchGroups = await _pitchGroupsUseCase.GetPitchGroupsAsync(filter);
 
         return Ok(new ApiOkResponse(pitchGroups));
     }
@@ -46,7 +47,7 @@ public class PitchGroupsController : ControllerBase
     {
         try
         {
-            var branches = await _branchesService.GetBranchesByPitchGroupIdAsync(pitchGroupId, filter);
+            var branches = await _branchesUseCase.GetBranchesByPitchGroupIdAsync(pitchGroupId, filter);
 
             return Ok(new ApiOkResponse(branches));
         }
@@ -69,7 +70,7 @@ public class PitchGroupsController : ControllerBase
     {
         try
         {
-            var pitchGroup = await _pitchGroupsService.GetPitchGroupByIdAsync(pitchGroupId);
+            var pitchGroup = await _pitchGroupsUseCase.GetPitchGroupByIdAsync(pitchGroupId);
 
             return Ok(new ApiOkResponse(pitchGroup));
         }
@@ -93,7 +94,7 @@ public class PitchGroupsController : ControllerBase
     {
         try
         {
-            var pitchGroupDto = await _pitchGroupsService.CreatePitchGroupAsync(request);
+            var pitchGroupDto = await _pitchGroupsUseCase.CreatePitchGroupAsync(request);
 
             return Ok(new ApiCreatedResponse(pitchGroupDto));
         }
@@ -118,7 +119,7 @@ public class PitchGroupsController : ControllerBase
     {
         try
         {
-            await _pitchGroupsService.UpdatePitchGroupAsync(pitchGroupId, request);
+            await _pitchGroupsUseCase.UpdatePitchGroupAsync(pitchGroupId, request);
 
             return Ok(new ApiOkResponse());
         }
@@ -146,7 +147,7 @@ public class PitchGroupsController : ControllerBase
     {
         try
         {
-            await _pitchGroupsService.DeletePitchGroupAsync(pitchGroupId);
+            await _pitchGroupsUseCase.DeletePitchGroupAsync(pitchGroupId);
 
             return Ok(new ApiOkResponse());
         }

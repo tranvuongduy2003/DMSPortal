@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using DMSPortal.BackendServer.Data.EntityBases;
+using DMSPortal.BackendServer.Abstractions.Entity;
 using DMSPortal.Models.Enums;
 
 namespace DMSPortal.BackendServer.Data.Entities;

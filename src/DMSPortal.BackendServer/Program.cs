@@ -1,5 +1,4 @@
 using DMSPortal.BackendServer.Extensions;
-using DMSPortal.BackendServer.Helpers;
 using Serilog;
 
 var AppCors = "AppCors";
@@ -10,7 +9,7 @@ Log.Information("Starting DMS Portal API up");
 
 try
 {
-    builder.Host.UseSerilog(Serilogger.Configure);
+    builder.Host.UseSerilog(LoggingExtensions.Configure);
     AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
     builder.Host.AddAppConfigurations();
 

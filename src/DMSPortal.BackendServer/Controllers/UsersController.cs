@@ -1,10 +1,11 @@
-﻿using DMSPortal.BackendServer.Attributes;
-using DMSPortal.BackendServer.Helpers.HttpResponses;
-using DMSPortal.BackendServer.Models;
-using DMSPortal.BackendServer.Services.Interfaces;
+﻿using DMSPortal.BackendServer.Abstractions.Services;
+using DMSPortal.BackendServer.Abstractions.UseCases;
+using DMSPortal.BackendServer.Attributes;
+using DMSPortal.Models.Common;
 using DMSPortal.Models.DTOs.User;
 using DMSPortal.Models.Enums;
 using DMSPortal.Models.Exceptions;
+using DMSPortal.Models.HttpResponses;
 using DMSPortal.Models.Requests.User;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,11 +15,11 @@ namespace DMSPortal.BackendServer.Controllers;
 [ApiController]
 public class UsersController : ControllerBase
 {
-    private readonly IUsersService _usersService;
+    private readonly IUsersUseCase _usersUseCase;
 
-    public UsersController(IUsersService usersService)
+    public UsersController(IUsersUseCase usersUseCase)
     {
-        _usersService = usersService;
+        _usersUseCase = usersUseCase;
     }
     
     [HttpGet]
@@ -27,7 +28,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetUsers([FromQuery] PaginationFilter filter)
     {
-        var users = await _usersService.GetUsersAsync(filter);
+        var users = await _usersUseCase.GetUsersAsync(filter);
 
         return Ok(new ApiOkResponse(users));
     }
@@ -41,7 +42,7 @@ public class UsersController : ControllerBase
     {
         try
         {
-            var user = await _usersService.GetUserByIdAsync(userId);
+            var user = await _usersUseCase.GetUserByIdAsync(userId);
 
             return Ok(new ApiOkResponse(user));
         }
@@ -65,7 +66,7 @@ public class UsersController : ControllerBase
     {
         try
         {
-            var user = await _usersService.CreateUserAsync(request);
+            var user = await _usersUseCase.CreateUserAsync(request);
 
             return Ok(new ApiCreatedResponse(user));
         }
@@ -90,7 +91,7 @@ public class UsersController : ControllerBase
     {
         try
         {
-            await _usersService.UpdateUserAsync(userId, request);
+            await _usersUseCase.UpdateUserAsync(userId, request);
 
             return Ok(new ApiOkResponse());
         }
@@ -118,7 +119,7 @@ public class UsersController : ControllerBase
     {
         try
         {
-            await _usersService.DeleteUserAsync(userId);
+            await _usersUseCase.DeleteUserAsync(userId);
 
             return Ok(new ApiOkResponse());
         }

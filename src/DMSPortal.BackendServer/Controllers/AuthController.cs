@@ -1,10 +1,11 @@
+using DMSPortal.BackendServer.Abstractions.Services;
+using DMSPortal.BackendServer.Abstractions.UseCases;
 using DMSPortal.BackendServer.Attributes;
 using DMSPortal.BackendServer.Data.Entities;
-using DMSPortal.BackendServer.Helpers.HttpResponses;
-using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.DTOs.Auth;
 using DMSPortal.Models.DTOs.User;
 using DMSPortal.Models.Enums;
+using DMSPortal.Models.HttpResponses;
 using DMSPortal.Models.Requests.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,12 +21,12 @@ namespace DMSPortal.BackendServer.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly IAuthService _authService;
+    private readonly IAuthUseCase _authUseCase;
     private readonly UserManager<User> _userManager;
 
-    public AuthController(IAuthService authService, UserManager<User> userManager)
+    public AuthController(IAuthUseCase authUseCase, UserManager<User> userManager)
     {
-        _authService = authService;
+        _authUseCase = authUseCase;
         _userManager = userManager;
     }
 
@@ -35,12 +36,12 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SignIn([FromBody] SignInRequest request)
     {
-        var signInResponse = await _authService.SignInAsync(
+        var signInResponse = await _authUseCase.SignInAsync(
             request.Username ?? "",
             request.Password ?? "");
 
         return signInResponse == null
-            ? Unauthorized(new ApiUnauthorizedResponse("Thông tin đăng nhập"))
+            ? Unauthorized(new ApiUnauthorizedResponse("Thông tin đăng nhập không chính xác"))
             : Ok(new ApiOkResponse(signInResponse, "Đăng nhập thành công!"));
     }
 
@@ -49,7 +50,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> LogOut()
     {
-        await _authService.SignOutAsync();
+        await _authUseCase.SignOutAsync();
 
             return Ok(new ApiOkResponse(new object(), "Đăng xuất thành công!"));
     }
@@ -72,7 +73,7 @@ public class AuthController : ControllerBase
         if (accessToken.IsNullOrEmpty())
             return Unauthorized(new ApiUnauthorizedResponse("Unauthorized"));
 
-        var refreshResponse = await _authService.RefreshTokenAsync(accessToken, request.RefreshToken);
+        var refreshResponse = await _authUseCase.RefreshTokenAsync(accessToken, request.RefreshToken);
 
         return refreshResponse is null
             ? Unauthorized(new ApiUnauthorizedResponse("invalid_refresh_token"))
@@ -85,7 +86,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
     {
-        await _authService.ForgotPasswordAsync(request.Email, request.HostUrl);
+        await _authUseCase.ForgotPasswordAsync(request.Email, request.HostUrl);
 
         return Ok(new ApiOkResponse("Quên mật khẩu thành công!"));
     }
@@ -120,7 +121,7 @@ public class AuthController : ControllerBase
         if (accessToken.IsNullOrEmpty())
             return Unauthorized(new ApiUnauthorizedResponse("invalid_token"));
 
-        var userDto = await _authService.GetProfileAsync(accessToken);
+        var userDto = await _authUseCase.GetProfileAsync(accessToken);
 
         return userDto is null
             ? Unauthorized(new ApiUnauthorizedResponse("Unauthorized"))

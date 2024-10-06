@@ -1,4 +1,4 @@
-﻿using DMSPortal.BackendServer.Helpers.HttpResponses;
+﻿using DMSPortal.Models.Common;
 using Newtonsoft.Json;
 
 namespace DMSPortal.BackendServer.Middlewares;

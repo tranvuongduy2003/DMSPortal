@@ -23,7 +23,7 @@ services:
 
   dms.seq:
     image: datalust/seq:latest
-    container_name: eventhub.seq
+    container_name: dms.seq
     environment:
       - ACCEPT_EULA=Y
     ports:
@@ -32,7 +32,7 @@ services:
     volumes:
       - seq_data:/data
   
-  dms.hangfire:
+  dms.hangfire: 
     image: mongo
     container_name: dms.hangfire
     ports:

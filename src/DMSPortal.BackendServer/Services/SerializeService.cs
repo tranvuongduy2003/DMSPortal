@@ -1,4 +1,4 @@
-﻿using DMSPortal.BackendServer.Services.Interfaces;
+﻿using DMSPortal.BackendServer.Abstractions.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;

@@ -1,8 +1,6 @@
 ﻿using DMSPortal.BackendServer.Data;
 using DMSPortal.BackendServer.Data.Entities;
-using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.Configurations;
-using DMSPortal.Models.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +8,8 @@ using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using DMSPortal.BackendServer.Abstractions.Services;
+using DMSPortal.Models.Constants;
 
 namespace DMSPortal.BackendServer.Services;
 

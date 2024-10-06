@@ -1,7 +1,7 @@
-﻿using DMSPortal.BackendServer.Data.EntityBases;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DMSPortal.BackendServer.Abstractions.Entity;
 
 namespace DMSPortal.BackendServer.Data.Entities;
 

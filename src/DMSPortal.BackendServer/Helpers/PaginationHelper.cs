@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using DMSPortal.BackendServer.Models;
+using DMSPortal.Models.Common;
 using DMSPortal.Models.Enums;
 
 namespace DMSPortal.BackendServer.Helpers;

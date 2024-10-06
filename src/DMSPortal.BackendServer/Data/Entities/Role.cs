@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
-using DMSPortal.BackendServer.Data.Interfaces;
+using DMSPortal.BackendServer.Abstractions.Entity;
 
 namespace DMSPortal.BackendServer.Data.Entities;
 

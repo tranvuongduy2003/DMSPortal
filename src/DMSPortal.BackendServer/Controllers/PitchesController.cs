@@ -1,11 +1,12 @@
+using DMSPortal.BackendServer.Abstractions.Services;
+using DMSPortal.BackendServer.Abstractions.UseCases;
 using DMSPortal.BackendServer.Attributes;
-using DMSPortal.BackendServer.Helpers.HttpResponses;
-using DMSPortal.BackendServer.Models;
-using DMSPortal.BackendServer.Services.Interfaces;
+using DMSPortal.Models.Common;
 using DMSPortal.Models.DTOs.Class;
 using DMSPortal.Models.DTOs.Pitch;
 using DMSPortal.Models.Enums;
 using DMSPortal.Models.Exceptions;
+using DMSPortal.Models.HttpResponses;
 using DMSPortal.Models.Requests.Pitch;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +17,13 @@ namespace DMSPortal.BackendServer.Controllers;
 [ApiController]
 public class PitchesController : ControllerBase
 {
-    private readonly IPitchesService _pitchesService;
-    private readonly IClassesService _classesService;
+    private readonly IPitchesUseCase _pitchesUseCase;
+    private readonly IClassesUseCase _classesUseCase;
 
-    public PitchesController(IPitchesService pitchesService, IClassesService classesService)
+    public PitchesController(IPitchesUseCase pitchesUseCase, IClassesUseCase classesUseCase)
     {
-        _pitchesService = pitchesService;
-        _classesService = classesService;
+        _pitchesUseCase = pitchesUseCase;
+        _classesUseCase = classesUseCase;
     }
 
     [HttpGet]
@@ -31,7 +32,7 @@ public class PitchesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetPitches([FromQuery] PaginationFilter filter)
     {
-        var pitches = await _pitchesService.GetPitchesAsync(filter);
+        var pitches = await _pitchesUseCase.GetPitchesAsync(filter);
 
         return Ok(new ApiOkResponse(pitches));
     }
@@ -46,7 +47,7 @@ public class PitchesController : ControllerBase
     {
         try
         {
-            var classes = await _classesService.GetClassesByPitchIdAsync(pitchId, filter);
+            var classes = await _classesUseCase.GetClassesByPitchIdAsync(pitchId, filter);
 
             return Ok(new ApiOkResponse(classes));
         }
@@ -70,7 +71,7 @@ public class PitchesController : ControllerBase
     {
         try
         {
-            var pitch = await _pitchesService.GetPitchByIdAsync(pitchId);
+            var pitch = await _pitchesUseCase.GetPitchByIdAsync(pitchId);
 
             return Ok(new ApiOkResponse(pitch));
         }
@@ -95,7 +96,7 @@ public class PitchesController : ControllerBase
     {
         try
         {
-            var pitch = await _pitchesService.CreatePitchAsync(request);
+            var pitch = await _pitchesUseCase.CreatePitchAsync(request);
 
             return Ok(new ApiCreatedResponse(pitch));
         }
@@ -121,7 +122,7 @@ public class PitchesController : ControllerBase
     {
         try
         {
-            await _pitchesService.UpdatePitchAsync(pitchId, request);
+            await _pitchesUseCase.UpdatePitchAsync(pitchId, request);
 
             return Ok(new ApiOkResponse());
         }
@@ -150,7 +151,7 @@ public class PitchesController : ControllerBase
     {
         try
         {
-            await _pitchesService.DeletePitchAsync(pitchId);
+            await _pitchesUseCase.DeletePitchAsync(pitchId);
 
             return Ok(new ApiOkResponse());
         }

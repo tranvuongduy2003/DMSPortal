@@ -1,8 +1,9 @@
+using DMSPortal.BackendServer.Abstractions.Services;
+using DMSPortal.BackendServer.Abstractions.UseCases;
 using DMSPortal.BackendServer.Attributes;
-using DMSPortal.BackendServer.Helpers.HttpResponses;
-using DMSPortal.BackendServer.Services.Interfaces;
 using DMSPortal.Models.DTOs.Function;
 using DMSPortal.Models.Enums;
+using DMSPortal.Models.HttpResponses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,11 +13,11 @@ namespace DMSPortal.BackendServer.Controllers;
 [ApiController]
 public class FunctionsController : ControllerBase
 {
-    private readonly IFunctionsService _functionsService;
+    private readonly IFunctionsUseCase _functionsUseCase;
 
-    public FunctionsController(IFunctionsService functionsService)
+    public FunctionsController(IFunctionsUseCase functionsUseCase)
     {
-        _functionsService = functionsService;
+        _functionsUseCase = functionsUseCase;
     }
     
     [HttpGet]
@@ -25,7 +26,7 @@ public class FunctionsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetFunctions()
     {
-        var functions = await _functionsService.GetAllFunctionsAsync();
+        var functions = await _functionsUseCase.GetAllFunctionsAsync();
 
         return Ok(new ApiOkResponse(functions));
     }

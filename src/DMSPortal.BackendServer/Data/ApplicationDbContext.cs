@@ -1,5 +1,5 @@
-﻿using DMSPortal.BackendServer.Data.Entities;
-using DMSPortal.BackendServer.Data.Interfaces;
+﻿using DMSPortal.BackendServer.Abstractions.Entity;
+using DMSPortal.BackendServer.Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;

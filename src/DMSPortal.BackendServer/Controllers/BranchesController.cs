@@ -1,11 +1,12 @@
+using DMSPortal.BackendServer.Abstractions.Services;
+using DMSPortal.BackendServer.Abstractions.UseCases;
 using DMSPortal.BackendServer.Attributes;
-using DMSPortal.BackendServer.Helpers.HttpResponses;
-using DMSPortal.BackendServer.Models;
-using DMSPortal.BackendServer.Services.Interfaces;
+using DMSPortal.Models.Common;
 using DMSPortal.Models.DTOs.Branch;
 using DMSPortal.Models.DTOs.Pitch;
 using DMSPortal.Models.Enums;
 using DMSPortal.Models.Exceptions;
+using DMSPortal.Models.HttpResponses;
 using DMSPortal.Models.Requests.Branch;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +17,13 @@ namespace DMSPortal.BackendServer.Controllers;
 [ApiController]
 public class BranchesController : ControllerBase
 {
-    private readonly IBranchesService _branchesService;
-    private readonly IPitchesService _pitchesService;
+    private readonly IBranchesUseCase _branchesUseCase;
+    private readonly IPitchesUseCase _pitchesUseCase;
 
-    public BranchesController(IBranchesService branchesService, IPitchesService pitchesService)
+    public BranchesController(IBranchesUseCase branchesUseCase, IPitchesUseCase pitchesUseCase)
     {
-        _branchesService = branchesService;
-        _pitchesService = pitchesService;
+        _branchesUseCase = branchesUseCase;
+        _pitchesUseCase = pitchesUseCase;
     }
     
     [HttpGet]
@@ -31,7 +32,7 @@ public class BranchesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetBranches([FromQuery] PaginationFilter filter)
     {
-        var branches = await _branchesService.GetBranchesAsync(filter);
+        var branches = await _branchesUseCase.GetBranchesAsync(filter);
 
         return Ok(new ApiOkResponse(branches));
     }
@@ -46,7 +47,7 @@ public class BranchesController : ControllerBase
     {
         try
         {
-            var pitches = await _pitchesService.GetPitchesByBranchIdAsync(branchId, filter);
+            var pitches = await _pitchesUseCase.GetPitchesByBranchIdAsync(branchId, filter);
 
             return Ok(new ApiOkResponse(pitches));
         }
@@ -69,7 +70,7 @@ public class BranchesController : ControllerBase
     {
         try
         {
-            var branch = await _branchesService.GetBranchByIdAsync(branchId);
+            var branch = await _branchesUseCase.GetBranchByIdAsync(branchId);
 
             return Ok(new ApiOkResponse(branch));
         }
@@ -93,7 +94,7 @@ public class BranchesController : ControllerBase
     {
         try
         {
-            var branch = await _branchesService.CreateBranchAsync(request);
+            var branch = await _branchesUseCase.CreateBranchAsync(request);
 
             return Ok(new ApiCreatedResponse(branch));
         }
@@ -118,7 +119,7 @@ public class BranchesController : ControllerBase
     {
         try
         {
-            await _branchesService.UpdateBranchAsync(branchId, request);
+            await _branchesUseCase.UpdateBranchAsync(branchId, request);
 
             return Ok(new ApiOkResponse());
         }
@@ -146,7 +147,7 @@ public class BranchesController : ControllerBase
     {
         try
         {
-            await _branchesService.DeleteBranchAsync(branchId);
+            await _branchesUseCase.DeleteBranchAsync(branchId);
 
             return Ok(new ApiOkResponse());
         }

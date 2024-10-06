@@ -1,9 +1,9 @@
-﻿using DMSPortal.BackendServer.Data.Interfaces;
-using DMSPortal.Models.Enums;
+﻿using DMSPortal.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using DMSPortal.BackendServer.Abstractions.Entity;
 
 namespace DMSPortal.BackendServer.Data.Entities;
 

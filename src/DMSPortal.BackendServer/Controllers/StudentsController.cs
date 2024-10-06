@@ -1,10 +1,11 @@
-﻿using DMSPortal.BackendServer.Attributes;
-using DMSPortal.BackendServer.Helpers.HttpResponses;
-using DMSPortal.BackendServer.Models;
-using DMSPortal.BackendServer.Services.Interfaces;
+﻿using DMSPortal.BackendServer.Abstractions.Services;
+using DMSPortal.BackendServer.Abstractions.UseCases;
+using DMSPortal.BackendServer.Attributes;
+using DMSPortal.Models.Common;
 using DMSPortal.Models.DTOs.Student;
 using DMSPortal.Models.Enums;
 using DMSPortal.Models.Exceptions;
+using DMSPortal.Models.HttpResponses;
 using DMSPortal.Models.Requests.Student;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,11 @@ namespace DMSPortal.BackendServer.Controllers;
 [ApiController]
 public class StudentsController : ControllerBase
 {
-    private readonly IStudentsService _studentsService;
+    private readonly IStudentsUseCase _studentsUseCase;
 
-    public StudentsController(IStudentsService studentsService)
+    public StudentsController(IStudentsUseCase studentsUseCase)
     {
-        _studentsService = studentsService;
+        _studentsUseCase = studentsUseCase;
     }
     
     [HttpGet]
@@ -28,7 +29,7 @@ public class StudentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetStudents([FromQuery] PaginationFilter filter)
     {
-        var students = await _studentsService.GetStudentsAsync(filter);
+        var students = await _studentsUseCase.GetStudentsAsync(filter);
 
         return Ok(new ApiOkResponse(students));
     }
@@ -42,7 +43,7 @@ public class StudentsController : ControllerBase
     {
         try
         {
-            var student = await _studentsService.GetStudentByIdAsync(studentId);
+            var student = await _studentsUseCase.GetStudentByIdAsync(studentId);
 
             return Ok(new ApiOkResponse(student));
         }
@@ -66,7 +67,7 @@ public class StudentsController : ControllerBase
     {
         try
         {
-            var student = await _studentsService.CreateStudentAsync(request);
+            var student = await _studentsUseCase.CreateStudentAsync(request);
 
             return Ok(new ApiCreatedResponse(student));
         }
@@ -91,7 +92,7 @@ public class StudentsController : ControllerBase
     {
         try
         {
-            await _studentsService.UpdateStudentAsync(studentId, request);
+            await _studentsUseCase.UpdateStudentAsync(studentId, request);
 
             return Ok(new ApiOkResponse());
         }
@@ -119,7 +120,7 @@ public class StudentsController : ControllerBase
     {
         try
         {
-            await _studentsService.DeleteStudentAsync(studentId);
+            await _studentsUseCase.DeleteStudentAsync(studentId);
 
             return Ok(new ApiOkResponse());
         }

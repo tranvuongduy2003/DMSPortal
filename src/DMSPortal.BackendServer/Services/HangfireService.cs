@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using DMSPortal.BackendServer.Services.Interfaces;
+using DMSPortal.BackendServer.Abstractions.Services;
 using Hangfire;
 
 namespace DMSPortal.BackendServer.Services;
