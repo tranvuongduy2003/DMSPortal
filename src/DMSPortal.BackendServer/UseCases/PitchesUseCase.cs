@@ -26,6 +26,7 @@ public class PitchesUseCase : IPitchesUseCase
     {
         var pitches = await _unitOfWork.Pitches
             .FindAll()
+            .Include(x => x.Branch)
             .ToListAsync();
 
         var pagination = PaginationHelper<Pitch>.Paginate(filter, pitches);
@@ -46,6 +47,7 @@ public class PitchesUseCase : IPitchesUseCase
 
         var pitches = await _unitOfWork.Pitches
             .FindByCondition(x => x.BranchId.Equals(branchId))
+            .Include(x => x.Branch)
             .ToListAsync();
 
         var pagination = PaginationHelper<Pitch>.Paginate(filter, pitches);

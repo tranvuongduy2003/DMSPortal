@@ -26,6 +26,7 @@ public class ClassesUseCase : IClassesUseCase
     {
         var classes = await _unitOfWork.Classes
             .FindAll()
+            .Include(x => x.Pitch)
             .ToListAsync();
 
         var pagination = PaginationHelper<Class>.Paginate(filter, classes);
@@ -46,6 +47,7 @@ public class ClassesUseCase : IClassesUseCase
 
         var classes = await _unitOfWork.Classes
             .FindByCondition(x => x.PitchId.Equals(pitchId))
+            .Include(x => x.Pitch)
             .ToListAsync();
 
         var pagination = PaginationHelper<Class>.Paginate(filter, classes);

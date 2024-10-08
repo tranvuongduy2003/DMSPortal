@@ -15,7 +15,7 @@ public class ClassDto
     
     public int? NumberOfStudents { get; set; } = 0;
     
-    public PitchDto Pitch { get; set; }
+    public IncludedPitchDto Pitch { get; set; }
     
     public DateTime CreatedAt { get; set; }
     

@@ -29,6 +29,8 @@ public class BranchesUseCase : IBranchesUseCase
     {
         var branches = await _unitOfWork.Branches
             .FindAll()
+            .Include(x => x.Manager)
+            .Include(x => x.PitchGroup)
             .ToListAsync();
 
         var pagination = PaginationHelper<Branch>.Paginate(filter, branches);
@@ -49,6 +51,8 @@ public class BranchesUseCase : IBranchesUseCase
 
         var branches = await _unitOfWork.Branches
             .FindByCondition(x => x.PitchGroupId.Equals(pitchGroupId))
+            .Include(x => x.Manager)
+            .Include(x => x.PitchGroup)
             .ToListAsync();
         
         var pagination = PaginationHelper<Branch>.Paginate(filter, branches);

@@ -21,9 +21,9 @@ public class BranchDto
     
     public EBranchStatus Status { get; set; }
     
-    public PitchGroupDto PitchGroup { get; set; }
+    public IncludedPitchGroupDto PitchGroup { get; set; }
     
-    public UserDto Manager { get; set; }
+    public ManagerDto Manager { get; set; }
     
     public IEnumerable<PitchDto> Pitches { get; set; }
     
