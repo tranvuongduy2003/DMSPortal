@@ -7,7 +7,6 @@ using DMSPortal.BackendServer.Abstractions.Entity;
 
 namespace DMSPortal.BackendServer.Data.Entities;
 
-[Table("Users")]
 public class User : IdentityUser, IDateTracking
 {
     [MaxLength(50)]
@@ -19,25 +18,26 @@ public class User : IdentityUser, IDateTracking
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public EGender? Gender { get; set; }
 
-    [Column(TypeName = "text")] 
-    public string? Avatar { get; set; }
-    
-    [Column(TypeName = "text")] 
-    public string? Address { get; set; }
+    [Column(TypeName = "text")] public string? Avatar { get; set; }
+
+    [Column(TypeName = "text")] public string? Address { get; set; }
 
     [Required]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public EUserStatus Status { get; set; }
 
-    [Range(0, Double.PositiveInfinity)]
-    public int? NumberOfBranches { get; set; } = 0;
+    [Range(0, Double.PositiveInfinity)] public int? NumberOfBranches { get; set; } = 0;
 
     public DateTime CreatedAt { get; set; }
-    
+
 
     public DateTime? DeletedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
-    
+
     public virtual ICollection<Branch>? Branches { get; set; } = new List<Branch>();
+    
+    public virtual ICollection<Class>? Classes { get; set; } = new List<Class>();
+
+    public virtual List<string>? Roles { get; set; } = null!;
 }

@@ -61,7 +61,6 @@ public class ApplicationDbContext : IdentityDbContext<User>
         builder.Entity<Student>().Property(x => x.Id).HasMaxLength(50).IsUnicode(false);
         builder.Entity<User>().Property(x => x.Id).HasMaxLength(50).IsUnicode(false);
 
-
         #region One-to-many
         
         builder.Entity<Branch>()
@@ -77,11 +76,14 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .HasOne(x => x.Pitch)
             .WithMany(x => x.Classes)
             .HasForeignKey(x => x.PitchId);
-        
         builder.Entity<Class>()
             .HasOne(x => x.Pitch)
             .WithMany(x => x.Classes)
             .HasForeignKey(x => x.PitchId);
+        builder.Entity<Class>()
+            .HasOne(x => x.Teacher)
+            .WithMany(x => x.Classes)
+            .HasForeignKey(x => x.TeacherId);
         
         builder.Entity<Note>()
             .HasOne(x => x.Student)

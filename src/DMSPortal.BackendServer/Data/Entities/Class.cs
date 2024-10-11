@@ -16,6 +16,10 @@ public class Class : IdentityEntityBase<string>
     [Required]
     [MaxLength(50)]
     public string PitchId { get; set; }
+    
+    [Required]
+    [MaxLength(50)]
+    public string TeacherId { get; set; }
 
     public EClassStatus Status { get; set; }
 
@@ -24,6 +28,9 @@ public class Class : IdentityEntityBase<string>
 
     [ForeignKey("PitchId")]
     public virtual Pitch Pitch { get; set; }
+    
+    [ForeignKey("TeacherId")]
+    public virtual User Teacher { get; set; }
 
     public virtual ICollection<StudentInClass> StudentInClasses { get; set; } = new List<StudentInClass>();
     

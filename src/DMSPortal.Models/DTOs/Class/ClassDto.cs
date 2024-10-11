@@ -1,4 +1,5 @@
 ﻿using DMSPortal.Models.DTOs.Pitch;
+using DMSPortal.Models.DTOs.User;
 using DMSPortal.Models.Enums;
 
 namespace DMSPortal.Models.DTOs.Class;
@@ -10,12 +11,16 @@ public class ClassDto
     public string Name { get; set; }
     
     public string PitchId { get; set; }
+    
+    public string TeacherId { get; set; }
 
     public EClassStatus Status { get; set; }
     
     public int? NumberOfStudents { get; set; } = 0;
     
     public IncludedPitchDto Pitch { get; set; }
+    
+    public IncludedUserDto Teacher { get; set; }
     
     public DateTime CreatedAt { get; set; }
     

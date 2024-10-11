@@ -23,12 +23,12 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         CreateMap<User, UserDto>().ReverseMap();
-        CreateMap<User, ManagerDto>();
-        
+        CreateMap<User, IncludedUserDto>();
+
         CreateMap<Command, CommandDto>().ReverseMap();
-        
+
         CreateMap<Function, FunctionDto>().ReverseMap();
-        
+
         CreateMap<PitchGroup, PitchGroupDto>().ReverseMap();
         CreateMap<PitchGroup, IncludedPitchGroupDto>();
         CreateMap<CreatePitchGroupRequest, PitchGroup>();
@@ -38,17 +38,17 @@ public class MappingProfile : Profile
         CreateMap<Branch, IncludedBranchDto>();
         CreateMap<CreateBranchRequest, Branch>();
         CreateMap<UpdateBranchRequest, Branch>().ReverseMap();
-        
+
         CreateMap<Class, ClassDto>().ReverseMap();
         CreateMap<CreateClassRequest, Class>();
         CreateMap<UpdateClassRequest, Class>().ReverseMap();
-        
+
         CreateMap<Pitch, PitchDto>().ReverseMap();
         CreateMap<Pitch, IncludedPitchDto>();
         CreateMap<CreatePitchRequest, Pitch>();
         CreateMap<UpdatePitchRequest, Pitch>().ReverseMap();
-        
-        
+
+
         CreateMap<Note, NoteDto>().ReverseMap();
         CreateMap<CreateNoteRequest, Note>();
         CreateMap<UpdateNoteRequest, Note>().ReverseMap();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -17,6 +18,10 @@ namespace DMSPortal.BackendServer.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "character varying(50)", unicode: false, maxLength: 50, nullable: false),
+                    Discriminator = table.Column<string>(type: "character varying(13)", maxLength: 13, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
@@ -32,15 +37,16 @@ namespace DMSPortal.BackendServer.Data.Migrations
                 {
                     Id = table.Column<string>(type: "character varying(50)", unicode: false, maxLength: 50, nullable: false),
                     FullName = table.Column<string>(type: "text", maxLength: 50, nullable: true),
-                    Dob = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Dob = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Gender = table.Column<int>(type: "integer", nullable: true),
                     Avatar = table.Column<string>(type: "text", nullable: true),
                     Address = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     NumberOfBranches = table.Column<int>(type: "integer", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    Roles = table.Column<List<string>>(type: "text[]", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -68,9 +74,9 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     Id = table.Column<string>(type: "character varying(50)", unicode: false, maxLength: 50, nullable: false),
                     Name = table.Column<string>(type: "text", maxLength: 50, nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -87,9 +93,9 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     SortOrder = table.Column<int>(type: "integer", nullable: false),
                     ParentId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -110,9 +116,9 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     NumberOfBranches = table.Column<int>(type: "integer", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -130,9 +136,9 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     EndTime = table.Column<string>(type: "text", nullable: false),
                     NumberOfClasses = table.Column<int>(type: "integer", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -146,7 +152,7 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     Id = table.Column<string>(type: "character varying(50)", unicode: false, maxLength: 50, nullable: false),
                     FullName = table.Column<string>(type: "text", maxLength: 50, nullable: false),
                     PhoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
-                    DOB = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DOB = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
                     Gender = table.Column<int>(type: "integer", nullable: true),
                     Height = table.Column<double>(type: "double precision", nullable: true),
@@ -165,9 +171,9 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     Status = table.Column<int>(type: "integer", nullable: false),
                     NumberOfClasses = table.Column<int>(type: "integer", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -190,26 +196,6 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Roles",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "character varying(50)", unicode: false, maxLength: 50, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Roles_AspNetRoles_Id",
-                        column: x => x.Id,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -307,9 +293,9 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     CommandId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     FunctionId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -327,6 +313,38 @@ namespace DMSPortal.BackendServer.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Permissions",
+                columns: table => new
+                {
+                    FunctionId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    RoleId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    CommandId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permissions", x => new { x.FunctionId, x.RoleId, x.CommandId });
+                    table.ForeignKey(
+                        name: "FK_Permissions_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Permissions_Commands_CommandId",
+                        column: x => x.CommandId,
+                        principalTable: "Commands",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Permissions_Functions_FunctionId",
+                        column: x => x.FunctionId,
+                        principalTable: "Functions",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Branches",
                 columns: table => new
                 {
@@ -338,9 +356,9 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     ManagerId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -367,9 +385,9 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     Content = table.Column<string>(type: "text", nullable: false),
                     StudentId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -383,38 +401,6 @@ namespace DMSPortal.BackendServer.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Permissions",
-                columns: table => new
-                {
-                    FunctionId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    RoleId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    CommandId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Permissions", x => new { x.FunctionId, x.RoleId, x.CommandId });
-                    table.ForeignKey(
-                        name: "FK_Permissions_Commands_CommandId",
-                        column: x => x.CommandId,
-                        principalTable: "Commands",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Permissions_Functions_FunctionId",
-                        column: x => x.FunctionId,
-                        principalTable: "Functions",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Permissions_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Pitches",
                 columns: table => new
                 {
@@ -424,9 +410,9 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     Status = table.Column<int>(type: "integer", nullable: false),
                     NumberOfClasses = table.Column<int>(type: "integer", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -446,16 +432,23 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     Id = table.Column<string>(type: "character varying(50)", unicode: false, maxLength: 50, nullable: false),
                     Name = table.Column<string>(type: "text", maxLength: 100, nullable: false),
                     PitchId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    TeacherId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     NumberOfStudents = table.Column<int>(type: "integer", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Classes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Classes_AspNetUsers_TeacherId",
+                        column: x => x.TeacherId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Classes_Pitches_PitchId",
                         column: x => x.PitchId,
@@ -472,12 +465,12 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     ClassId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     ShiftId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     StudentId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    CheckinAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CheckoutAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CheckinAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CheckoutAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -509,9 +502,9 @@ namespace DMSPortal.BackendServer.Data.Migrations
                     ClassId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     ShiftId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -536,15 +529,15 @@ namespace DMSPortal.BackendServer.Data.Migrations
                 {
                     ClassId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     StudentId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    JoinedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    JoinedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     NumberOfAttendance = table.Column<int>(type: "integer", nullable: true),
                     ClassType = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     PaymentStatus = table.Column<int>(type: "integer", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -631,6 +624,11 @@ namespace DMSPortal.BackendServer.Data.Migrations
                 column: "PitchId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Classes_TeacherId",
+                table: "Classes",
+                column: "TeacherId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ClassInShifts_ShiftId",
                 table: "ClassInShifts",
                 column: "ShiftId");
@@ -711,22 +709,19 @@ namespace DMSPortal.BackendServer.Data.Migrations
                 name: "Shifts");
 
             migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
                 name: "Commands");
 
             migrationBuilder.DropTable(
                 name: "Functions");
 
             migrationBuilder.DropTable(
-                name: "Roles");
-
-            migrationBuilder.DropTable(
                 name: "Classes");
 
             migrationBuilder.DropTable(
                 name: "Students");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Pitches");

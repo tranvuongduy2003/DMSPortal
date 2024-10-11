@@ -33,6 +33,17 @@ public class UsersController : ControllerBase
         return Ok(new ApiOkResponse(users));
     }
     
+    [HttpGet("teachers")]
+    [ClaimRequirement(EFunctionCode.SYSTEM_USER, ECommandCode.VIEW)]
+    [ProducesResponseType(typeof(List<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetTeachers([FromQuery] PaginationFilter filter)
+    {
+        var teachers = await _usersUseCase.GetTeachersAsync(filter);
+
+        return Ok(new ApiOkResponse(teachers));
+    }
+    
     [HttpGet("{userId}")]
     [ClaimRequirement(EFunctionCode.SYSTEM_USER, ECommandCode.VIEW)]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]

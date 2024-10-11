@@ -4,7 +4,6 @@ using DMSPortal.BackendServer.Abstractions.Entity;
 
 namespace DMSPortal.BackendServer.Data.Entities;
 
-[Table("Roles")]
 public class Role : IdentityRole, IDateTracking
 {
     public DateTime CreatedAt { get; set; }

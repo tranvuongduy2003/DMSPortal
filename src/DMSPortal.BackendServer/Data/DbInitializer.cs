@@ -61,6 +61,10 @@ public class DbInitializer
             {
                 Name = nameof(EUserRole.HANH_CHINH),
             });
+            await _roleManager.CreateAsync(new Role()
+            {
+                Name = nameof(EUserRole.GIAO_VIEN),
+            });
         }
 
         await _context.SaveChangesAsync();
@@ -102,7 +106,7 @@ public class DbInitializer
 
             #region Generate HanhChinh
 
-            var userFaker = new Faker<User>("vi")
+            var hanhChinhFaker = new Faker<User>("vi")
                 .RuleFor(u => u.UserName, f => f.Person.UserName)
                 .RuleFor(u => u.FullName, f => f.Person.FullName)
                 .RuleFor(u => u.Email, f => f.Person.Email)
@@ -116,13 +120,40 @@ public class DbInitializer
 
             for (var userIndex = 0; userIndex < 10; userIndex++)
             {
-                var hanhchinh = userFaker.Generate();
+                var hanhchinh = hanhChinhFaker.Generate();
                 var hanhchinhResult = await _userManager.CreateAsync(hanhchinh, "User@123");
                 if (!hanhchinhResult.Succeeded) continue;
 
                 var user = await _userManager.FindByEmailAsync(hanhchinh?.Email ?? "");
                 if (user != null)
                     await _userManager.AddToRoleAsync(user, nameof(EUserRole.HANH_CHINH));
+            }
+
+            #endregion
+
+            #region Generate GiaoVien
+
+            var giaoVienFaker = new Faker<User>("vi")
+                .RuleFor(u => u.UserName, f => f.Person.UserName)
+                .RuleFor(u => u.FullName, f => f.Person.FullName)
+                .RuleFor(u => u.Email, f => f.Person.Email)
+                .RuleFor(u => u.PhoneNumber, f => f.Phone.PhoneNumber("####-###-###"))
+                .RuleFor(u => u.Dob, f => f.Person.DateOfBirth.ToUniversalTime())
+                .RuleFor(u => u.Gender, f => f.PickRandom<EGender>())
+                .RuleFor(u => u.Avatar, f => f.Internet.Avatar())
+                .RuleFor(u => u.Address, f => f.Address.ToString())
+                .RuleFor(u => u.NumberOfBranches, _ => 2)
+                .RuleFor(u => u.Status, _ => EUserStatus.ACTIVE);
+
+            for (var userIndex = 0; userIndex < 10; userIndex++)
+            {
+                var giaovien = giaoVienFaker.Generate();
+                var giaovienResult = await _userManager.CreateAsync(giaovien, "User@123");
+                if (!giaovienResult.Succeeded) continue;
+
+                var user = await _userManager.FindByEmailAsync(giaovien?.Email ?? "");
+                if (user != null)
+                    await _userManager.AddToRoleAsync(user, nameof(EUserRole.GIAO_VIEN));
             }
 
             #endregion
@@ -488,12 +519,16 @@ public class DbInitializer
                 .AsNoTracking()
                 .ToArrayAsync();
 
+            var users = (await _userManager.GetUsersInRoleAsync(nameof(EUserRole.GIAO_VIEN))).ToArray();
+
             for (int i = 0; i < 100; i++)
             {
                 var pitch = pitches[new Faker().Random.Int(0, pitches.Length - 1)];
+                var user = users[new Faker().Random.Int(0, users.Length - 1)];
                 var classFaker = new Faker<Class>("vi")
                     .RuleFor(x => x.Name, f => $"{f.PickRandom<EClassType>().GetDisplayName()}-{i:00}")
                     .RuleFor(x => x.PitchId, f => pitch.Id)
+                    .RuleFor(x => x.TeacherId, f => user.Id)
                     .RuleFor(x => x.Status, f => f.PickRandom<EClassStatus>());
 
                 var generatedClass = classFaker.Generate();

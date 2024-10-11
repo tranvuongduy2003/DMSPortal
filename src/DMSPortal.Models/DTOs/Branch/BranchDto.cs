@@ -23,7 +23,7 @@ public class BranchDto
     
     public IncludedPitchGroupDto PitchGroup { get; set; }
     
-    public ManagerDto Manager { get; set; }
+    public IncludedUserDto IncludedUser { get; set; }
     
     public IEnumerable<PitchDto> Pitches { get; set; }
     

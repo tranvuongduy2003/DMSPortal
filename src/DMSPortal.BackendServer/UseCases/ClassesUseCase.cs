@@ -7,17 +7,20 @@ using DMSPortal.Models.Common;
 using DMSPortal.Models.DTOs.Class;
 using DMSPortal.Models.Exceptions;
 using DMSPortal.Models.Requests.Class;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace DMSPortal.BackendServer.UseCases;
 
 public class ClassesUseCase : IClassesUseCase
 {
+    private readonly UserManager<User> _userManager;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public ClassesUseCase(IUnitOfWork unitOfWork, IMapper mapper)
+    public ClassesUseCase(UserManager<User> userManager, IUnitOfWork unitOfWork, IMapper mapper)
     {
+        _userManager = userManager;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
@@ -27,6 +30,7 @@ public class ClassesUseCase : IClassesUseCase
         var classes = await _unitOfWork.Classes
             .FindAll()
             .Include(x => x.Pitch)
+            .Include(x => x.Teacher)
             .ToListAsync();
 
         var pagination = PaginationHelper<Class>.Paginate(filter, classes);
@@ -48,6 +52,7 @@ public class ClassesUseCase : IClassesUseCase
         var classes = await _unitOfWork.Classes
             .FindByCondition(x => x.PitchId.Equals(pitchId))
             .Include(x => x.Pitch)
+            .Include(x => x.Teacher)
             .ToListAsync();
 
         var pagination = PaginationHelper<Class>.Paginate(filter, classes);
@@ -64,6 +69,7 @@ public class ClassesUseCase : IClassesUseCase
         var classEntity = await _unitOfWork.Classes
             .FindByCondition(x => x.Id.Equals(classId))
             .Include(x => x.Pitch)
+            .Include(x => x.Teacher)
             .FirstOrDefaultAsync();
 
         if (classEntity == null)
@@ -83,6 +89,10 @@ public class ClassesUseCase : IClassesUseCase
         var pitch = await _unitOfWork.Pitches.GetByIdAsync(request.PitchId);
         if (pitch == null)
             throw new NotFoundException($"Sân không tồn tại");
+
+        var teacher = await _userManager.FindByIdAsync(request.TeacherId);
+        if (teacher == null)
+            throw new NotFoundException($"Giáo viên không tồn tại");
 
         var classData = _mapper.Map<Class>(request);
         await _unitOfWork.Classes.CreateAsync(classData);
@@ -106,9 +116,14 @@ public class ClassesUseCase : IClassesUseCase
                 .ExistAsync(x => x.Name.Equals(request.Name));
         if (isClassExisted)
             throw new BadRequestException($"Lớp {request.Name} đã tổn tại");
-        
+
+        var teacher = await _userManager.FindByIdAsync(request.TeacherId);
+        if (teacher == null)
+            throw new NotFoundException($"Giáo viên không tồn tại");
+
         classData.Name = request.Name;
         classData.Status = request.Status;
+        classData.TeacherId = request.TeacherId;
         await _unitOfWork.Classes.UpdateAsync(classData);
         await _unitOfWork.CommitAsync();
 

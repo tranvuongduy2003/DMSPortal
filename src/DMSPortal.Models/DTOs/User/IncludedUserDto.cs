@@ -2,7 +2,7 @@
 
 namespace DMSPortal.Models.DTOs.User;
 
-public class ManagerDto
+public class IncludedUserDto
 {
     public string Id { get; set; }
     

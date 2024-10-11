@@ -287,6 +287,7 @@ public static class ServiceExtensions
             .AddTransient<ICommandsUseCase, CommandsUseCase>()
             .AddTransient<IPermissionsUseCase, PermissionsUseCase>()
             .AddTransient<IFunctionsUseCase, FunctionsUseCase>()
+            .AddTransient<IUsersUseCase, UsersUseCase>()
             .AddScoped(typeof(IRepositoryQueryBase<,>), typeof(RepositoryQueryBase<,>))
             .AddScoped(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>))
             .AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork))

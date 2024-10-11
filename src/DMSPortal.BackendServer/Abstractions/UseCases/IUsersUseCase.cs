@@ -8,6 +8,8 @@ public interface IUsersUseCase
 {
     Task<Pagination<UserDto>> GetUsersAsync(PaginationFilter filter);
     
+    Task<Pagination<UserDto>> GetTeachersAsync(PaginationFilter filter);
+    
     Task<UserDto> GetUserByIdAsync(string userId);
     
     Task<UserDto> CreateUserAsync(CreateUserRequest request);

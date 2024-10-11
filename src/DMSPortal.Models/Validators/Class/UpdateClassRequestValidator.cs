@@ -18,6 +18,12 @@ public class UpdateClassRequestValidator : AbstractValidator<UpdateClassRequest>
             .NotEmpty()
             .WithMessage("Name không được để trống");
         
+        RuleFor(x => x.TeacherId)
+            .NotEmpty()
+            .WithMessage("TeacherId không được để trống")
+            .MaximumLength(50)
+            .WithMessage("TeacherId phải có ít hơn 50 kí tự");
+        
         RuleFor(x => x.Status)
             .NotEmpty()
             .WithMessage("Status không được để trống")
